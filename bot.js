@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const { prefix, token, riotToken } = require('./config.json');
 const fetch = require('node-fetch');
+const { URL } = require('url');
 
 
 client.once('ready', () => {
@@ -25,7 +26,7 @@ client.on('message', async message => {
 
 		const getData = async url => {
 			try {
-				const response = await fetch(url, {
+				const response = await fetch(new URL(url), {
 					headers: {
 						'X-Riot-Token': riotToken,
 					},
