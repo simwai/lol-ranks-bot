@@ -45,9 +45,7 @@ client.on('message', async message => {
 		getData(rankDataURL).then(rankData => {
 			let soloQueueRankData = null;
 
-			// eslint-disable-next-line prefer-const
 			for (let key in rankData) {
-				// eslint-disable-next-line prefer-const
 				let currData = rankData[key];
 				if (currData.queueType === 'RANKED_SOLO_5x5') {
 					soloQueueRankData = currData;
@@ -66,7 +64,6 @@ client.on('message', async message => {
 					for (let key in ranks) {
 						let rank = ranks[key];
 						let currRank = message.guild.roles.find(r => r.name === rank);
-						console.log(rank, currRank);
 						if(message.member.roles.has(currRank.id)) {
 							member.removeRole(currRank).catch(console.error);
 						}
