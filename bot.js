@@ -52,7 +52,7 @@ client.on('message', async message => {
 				let member = message.member;
 
 				if(message.member.roles.has(role.id)) {
-					message.channel.send('You are currently ' + formattedTier + ' ' + rankData[0].rank + '. Role remaining the same!');
+					message.channel.send(message.member.toString() + ' - You are currently ' + formattedTier + ' ' + rankData[0].rank + '. You already have that role!');
 				} else {
 					for (let key in ranks) {
 						let rank = ranks[key];
@@ -64,7 +64,7 @@ client.on('message', async message => {
 					}
 	
 					member.addRole(role).catch(console.error);
-					message.channel.send('You are currently ' + formattedTier + ' ' + rankData[0].rank + '. Assigning role!');
+					message.channel.send(message.member.toString() + ' - you are currently ' + formattedTier + ' ' + rankData[0].rank + '. Assigning role!');
 				}				
 			});
 		});
