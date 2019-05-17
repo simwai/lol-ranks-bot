@@ -60,7 +60,7 @@ client.on('message', async message => {
 				const member = message.member;
 
 				if(message.member.roles.has(role.id)) {
-					message.channel.send(message.member.toString() + ' - You are currently ' + formattedTier + ' ' + rankData[0].rank + '. You already have that role!');
+					message.channel.send(message.member.toString() + ' - You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. You already have that role!');
 				} else {
 					for (let key in ranks) {
 						let rank = ranks[key];
@@ -71,7 +71,7 @@ client.on('message', async message => {
 					}
 
 					member.addRole(role).catch(console.error);
-					message.channel.send(message.member.toString() + ' - you are currently ' + formattedTier + ' ' + rankData[0].rank + '. Assigning role!');
+					message.channel.send(message.member.toString() + ' - you are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. Assigning role!');
 				}
 			} else {
 				message.channel.send(message.member.toString() + ' - can\'t find a Solo Queue rank for that summoner name! Please check your summoner name, or try again later');
