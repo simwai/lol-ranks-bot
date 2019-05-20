@@ -25,6 +25,8 @@
   "homepage": "https://github.com/AlthalusAvan/lol-ranks-bot#readme",
   "dependencies": {
     "discord.js": "^11.5.0",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "sequelize": "^5.8.6",
+    "sqlite3": "^4.0.8"
   }
 }
