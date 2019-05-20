@@ -53,44 +53,46 @@ async function getSummonerData(message, args) {
 }
 
 async function setRoleByRank(message, args, summonerData = null) {
-	if (!summonerData) {
-		summonerData = await getSummonerData(message, args);
-	}
-
-	const rankDataURL = 'https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/' + summonerData.id;
-
-	getData(message, rankDataURL).then(rankData => {
-		let soloQueueRankData = null;
-
-		for (let key in rankData) {
-			let currData = rankData[key];
-			if (currData.queueType === 'RANKED_SOLO_5x5') {
-				soloQueueRankData = currData;
-			}
+	if (message.channel.id === '578622525441966098') {
+		if (!summonerData) {
+			summonerData = await getSummonerData(message, args);
 		}
 
-		if (soloQueueRankData) {
-			const formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
+		const rankDataURL = 'https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/' + summonerData.id;
 
-			const role = message.guild.roles.find(r => r.name === formattedTier);
-			const member = message.member;
+		getData(message, rankDataURL).then(rankData => {
+			let soloQueueRankData = null;
 
-			if(message.member.roles.has(role.id)) {
-				message.reply('You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. You already have that role!');
-			} else {
-				for (let key in ranks) {
-					let rank = ranks[key];
-					let currRank = message.guild.roles.find(r => r.name === rank);
-					if(message.member.roles.has(currRank.id)) {
-						member.removeRole(currRank).catch(console.error);
-					}
+			for (let key in rankData) {
+				let currData = rankData[key];
+				if (currData.queueType === 'RANKED_SOLO_5x5') {
+					soloQueueRankData = currData;
 				}
-
-				member.addRole(role).catch(console.error);
-				message.reply('You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. Assigning role!');
 			}
-		} else {
-			message.reply('Can\'t find a Solo Queue rank for that summoner name! Please check your summoner name, or try again later');
-		}
-	});
+
+			if (soloQueueRankData) {
+				const formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
+
+				const role = message.guild.roles.find(r => r.name === formattedTier);
+				const member = message.member;
+
+				if(message.member.roles.has(role.id)) {
+					message.reply('You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. You already have that role!');
+				} else {
+					for (let key in ranks) {
+						let rank = ranks[key];
+						let currRank = message.guild.roles.find(r => r.name === rank);
+						if(message.member.roles.has(currRank.id)) {
+							member.removeRole(currRank).catch(console.error);
+						}
+					}
+
+					member.addRole(role).catch(console.error);
+					message.reply('You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. Assigning role!');
+				}
+			} else {
+				message.reply('Can\'t find a Solo Queue rank for that summoner name! Please check your summoner name, or try again later');
+			}
+		});
+	}
 }
