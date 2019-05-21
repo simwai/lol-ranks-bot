@@ -38,7 +38,7 @@ async function getData(message, url) {
 		return json;
 	} catch (error) {
 		console.log(error);
-		message.reply('There was an error processing the request! Please try again in a few minutes, or contact an admin via #ask-admins if the issue persists!');
+		message.reply(`There was an error processing the request! Please try again in a few minutes, or contact an admin via ${message.guild.channels.get('578644031672942622').toString()} if the issue persists!`);
 	}
 }
 
@@ -53,7 +53,7 @@ async function getSummonerData(message, args) {
 }
 
 async function setRoleByRank(message, args, summonerData = null) {
-	if (message.channel.id === '578622525441966098') {
+	if (message.channel.id === '578622525441966098' || message.channel.id === '578871424152764417') {
 		if (!summonerData) {
 			summonerData = await getSummonerData(message, args);
 		}
@@ -91,7 +91,7 @@ async function setRoleByRank(message, args, summonerData = null) {
 					message.reply('You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. Assigning role!');
 				}
 			} else {
-				message.reply('Can\'t find a Solo Queue rank for that summoner name! Please check your summoner name, or try again later');
+				message.reply(`Can't find a Solo Queue rank for that summoner name! Please try again in a few minutes, or contact an admin via ${message.guild.channels.get('578644031672942622').toString()} if the issue persists!`);
 			}
 		});
 	}
