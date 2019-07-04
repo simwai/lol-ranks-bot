@@ -1,5 +1,21 @@
 {
+    "channels": {
+        "role": "CHANNELID",
+        "debug": "CHANNELID",
+        "help": "CHANNELID"
+    },
 	"prefix": "!",
-    "token": "DiscordToken",
-    "riotToken": "RiotAPIToken"
+    "riotToken": "RIOT-API-TOKEN",
+    "ranks": [
+        "Iron",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum",
+        "Diamond",
+        "Master",
+        "Grandmaster",
+        "Challenger"
+    ],
+    "discordToken": "DISCORD-API-TOKEN"
 }

@@ -1,16 +1,17 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const { prefix, token, riotToken } = require('./config.json');
+const config = require('./config.json');
 const fetch = require('node-fetch');
 const { URL } = require('url');
 
-const ranks = ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Grandmaster', 'Challenger'];
+const prefix = config.prefix;
+const ranks = config.ranks;
 
 client.once('ready', () => {
 	console.log('Ready!');
 });
 
-client.login(token);
+client.login(config.discordToken);
 
 client.on('message', async message => {
 	if (!message.content.startsWith(prefix) || message.author.bot)	return;
@@ -31,14 +32,14 @@ async function getData(message, url) {
 	try {
 		const response = await fetch(new URL(url), {
 			headers: {
-				'X-Riot-Token': riotToken,
+				'X-Riot-Token': config.riotToken,
 			},
 		});
 		const json = await response.json();
 		return json;
 	} catch (error) {
 		console.log(error);
-		message.reply(`There was an error processing the request! Please try again in a few minutes, or contact an admin via ${message.guild.channels.get('578644031672942622').toString()} if the issue persists!`);
+		message.reply(`There was an error processing the request! Please try again in a few minutes, or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`);
 	}
 }
 
@@ -53,7 +54,7 @@ async function getSummonerData(message, args) {
 }
 
 async function setRoleByRank(message, args, summonerData = null) {
-	if (message.channel.id === '578622525441966098' || message.channel.id === '578871424152764417') {
+	if (message.channel.id === config.channels.role || message.channel.id === config.channels.debug) {
 		if (!summonerData) {
 			summonerData = await getSummonerData(message, args);
 		}
@@ -91,7 +92,7 @@ async function setRoleByRank(message, args, summonerData = null) {
 					message.reply('You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. Assigning role!');
 				}
 			} else {
-				message.reply(`Can't find a Solo Queue rank for that summoner name! Please try again in a few minutes, or contact an admin via ${message.guild.channels.get('578644031672942622').toString()} if the issue persists!`);
+				message.reply(`Can't find a Solo Queue rank for that summoner name! Please try again in a few minutes, or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`);
 			}
 		});
 	}
