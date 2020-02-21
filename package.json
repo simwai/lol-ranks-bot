@@ -25,6 +25,7 @@
   "homepage": "https://github.com/AlthalusAvan/lol-ranks-bot#readme",
   "dependencies": {
     "discord.js": "^11.5.0",
+    "lowdb": "^1.0.0",
     "node-fetch": "^2.6.0"
   }
 }

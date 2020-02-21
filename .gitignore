@@ -1,5 +1,5 @@
 config.json
-database.sqlite
+players.json
 
 # Logs
 logs
