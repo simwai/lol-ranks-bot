@@ -36,7 +36,7 @@ client.on('message', async message => {
 	}
 });
 
-async function checkAuth(message, summonerID) {
+async function checkAuth(summonerID) {
 	const authURL = `https://euw1.api.riotgames.com/lol/platform/v4/third-party-code/by-summoner/${summonerID}`;
 
 	const authData = await getData(authURL);
@@ -87,17 +87,12 @@ async function setRoleByRank(message, args, summonerData = null) {
 		let player = db.get('players').filter({ discordID: discordID }).value();
 
 		if (player.length > 0) {
-			let playerData = player[0];
-
-			if(playerData.authenticated) {
-				authenticated = true;
-			}
+			authenticated = player[0].authenticated;
 		} else {
 			let authCode = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 			db.get('players')
-				.push({ discordID: discordID, summonerID: summonerData.id, authCode: authCode, authenticated: false, rank: null })
+				.push({ discordID: message.author.id, summonerID: summonerData.id, authCode: authCode, authenticated: false, rank: null })
 				.write();
-			player = db.read().get('players').filter({ discordID: discordID }).value();
 		}
 
 		if (summonerData.id !== player[0].summonerID) {
@@ -114,7 +109,7 @@ async function setRoleByRank(message, args, summonerData = null) {
 		if (!authenticated) {
 			try {
 				let playerData = player[0];
-				let authData = await checkAuth(message, summonerData.id);
+				let authData = await checkAuth(summonerData.id);
 
 				if(authData === playerData.authCode) {
 					reply += 'Onwership verified! Grabbing your rank now... \n\n';
@@ -186,15 +181,13 @@ async function setRoleByRank(message, args, summonerData = null) {
 							.write();
 						player = db.read().get('players').filter({ discordID: discordID }).value();
 					}
-					message.reply(reply);
 				})
 				.catch(error => {
 					reply += `There was an error processing the request! Please try again in a few minutes, or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
 					console.error(error);
-					message.reply(reply);
 				});
-		} else {
-			message.reply(reply);
 		}
+
+		message.reply(reply);
 	}
 }
