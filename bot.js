@@ -100,7 +100,7 @@ async function setRoleByRank(message, args, summonerData = null) {
 			player = db.read().get('players').filter({ discordID: discordID }).value();
 		}
 
-		if (summonerData.id !== player.summonerID) {
+		if (summonerData.id !== player[0].summonerID) {
 			reply += 'Summoner name has been changed! Resetting account authentication... \n\n';
 
 			authenticated = false;
