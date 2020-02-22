@@ -36,7 +36,7 @@ client.on('message', async message => {
 	}
 });
 
-async function checkAuth(summonerID) {
+async function checkAuth(message, summonerID) {
 	const authURL = `https://euw1.api.riotgames.com/lol/platform/v4/third-party-code/by-summoner/${summonerID}`;
 
 	const authData = await getData(authURL);
@@ -109,7 +109,7 @@ async function setRoleByRank(message, args, summonerData = null) {
 		if (!authenticated) {
 			try {
 				let playerData = player[0];
-				let authData = await checkAuth(summonerData.id);
+				let authData = await checkAuth(message, summonerData.id);
 
 				if(authData === playerData.authCode) {
 					reply += 'Onwership verified! Grabbing your rank now... \n\n';
@@ -181,13 +181,15 @@ async function setRoleByRank(message, args, summonerData = null) {
 							.write();
 						player = db.read().get('players').filter({ discordID: discordID }).value();
 					}
+					message.reply(reply);
 				})
 				.catch(error => {
 					reply += `There was an error processing the request! Please try again in a few minutes, or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
 					console.error(error);
+					message.reply(reply);
 				});
+		} else {
+			message.reply(reply);
 		}
-
-		message.reply(reply);
 	}
 }
