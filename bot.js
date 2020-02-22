@@ -129,7 +129,8 @@ async function setRoleByRank(message, args, summonerData = null) {
 					`2. Navigate to Verification, then enter the following code: \`${playerData.authCode}\` \n` +
 					'3. Press save \n' +
 					'4. Wait a few minutes, then try to get your role again! \n \n' +
-					`if you've already done this, try again in a few minutes, or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
+					'if you\'ve already done this, try again in a few minutes, or contact an admin via' +
+					`${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
 			}
 		}
 
@@ -174,7 +175,8 @@ async function setRoleByRank(message, args, summonerData = null) {
 							reply += 'You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. Assigning role!';
 						}
 					} else {
-						reply += `Can't find a Solo Queue rank for that summoner name! Please try again in a few minutes, or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
+						reply += 'Can\'t find a Solo Queue rank for that summoner name! Please try again in a few minutes,' +
+							`or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
 						db.get('players')
 							.find({ discordID: discordID })
 							.assign({ rank: null })
@@ -184,7 +186,8 @@ async function setRoleByRank(message, args, summonerData = null) {
 					message.reply(reply);
 				})
 				.catch(error => {
-					reply += `There was an error processing the request! Please try again in a few minutes, or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
+					reply += 'There was an error processing the request! Please try again in a few minutes,' +
+						` or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
 					console.error(error);
 					message.reply(reply);
 				});
