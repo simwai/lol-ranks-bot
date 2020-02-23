@@ -6,12 +6,18 @@ const { URL } = require('url');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const CronJob = require('cron').CronJob;
+const Bottleneck = require('bottleneck');
 
 const adapter = new FileSync('players.json');
 const db = low(adapter);
 
 const prefix = config.prefix;
 const ranks = config.ranks;
+
+const limiter = new Bottleneck({
+	maxConcurrent: config.concurrentRequests,
+	minTime: config.requestTime,
+});
 
 db.defaults({ players: [] })
 	.write();
@@ -31,10 +37,12 @@ client.on('message', async message => {
 
 	switch (command) {
 	case 'rank':
-		setRoleByRank(message, args)
-			.then(reply => {
-				message.reply(reply);
-			});
+		limiter.schedule(() =>
+			setRoleByRank(message, args)
+				.then(reply => {
+					message.reply(reply);
+				})
+		);
 		break;
 	default:
 		break;
@@ -86,10 +94,12 @@ function checkRanks(message) {
 		let discordUser = message.guild.members.find(m => m.id === player.discordID);
 		let displayName = discordUser.displayName;
 
-		setRoleByRank(message, null, player.summonerID, player.discordID, player)
-			.then(result => {
-				message.reply(`${displayName}: ${result}`);
-			});
+		limiter.schedule(() =>
+			setRoleByRank(message, null, player.summonerID, player.discordID, player)
+				.then(result => {
+					message.reply(`${displayName}: ${result}`);
+				})
+		);
 	}
 }
 

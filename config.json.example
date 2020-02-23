@@ -20,5 +20,7 @@
     "discordToken": "DISCORD-API-TOKEN",
     "timeZone": "Europe/Dublin",  
     "enableCronJob": true,
-    "cronTab": "00 00 02 * * *" 
+    "cronTab": "00 00 02 * * *",
+    "concurrentRequests": 1,
+    "requestTime": 250
 }
