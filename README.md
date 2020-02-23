@@ -6,5 +6,5 @@ A Discord bot to assign roles based on League of Legends Rank!
 - ~Add error handling to existing functions for summoner not found, rank not found etc.~ Done
 - ~Add verification system using 3rd Party Code API~ Done
 - ~Add local SQLite user tracking to allow verification of account ownership~ done, but using lowDB
-- Add recurring task to update users nightly
+- ~Add recurring task to update users nightly~ Done
 - Add setup documentation

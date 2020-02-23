@@ -17,5 +17,8 @@
         "Grandmaster",
         "Challenger"
     ],
-    "discordToken": "DISCORD-API-TOKEN"
+    "discordToken": "DISCORD-API-TOKEN",
+    "timeZone": "Europe/Dublin",  
+    "enableCronJob": true,
+    "cronTab": "00 00 02 * * *" 
 }

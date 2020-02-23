@@ -5,6 +5,7 @@ const fetch = require('node-fetch');
 const { URL } = require('url');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
+const CronJob = require('cron').CronJob;
 
 const adapter = new FileSync('players.json');
 const db = low(adapter);
@@ -16,6 +17,7 @@ db.defaults({ players: [] })
 	.write();
 
 client.once('ready', () => {
+	console.clear();
 	console.log('Ready!');
 });
 
@@ -29,12 +31,26 @@ client.on('message', async message => {
 
 	switch (command) {
 	case 'rank':
-		setRoleByRank(message, args);
+		setRoleByRank(message, args)
+			.then(reply => {
+				message.reply(reply);
+			});
 		break;
 	default:
 		break;
 	}
 });
+
+if(config.enableCronJob) {
+	const job = new CronJob(config.cronTab, function() {
+		client.channels.get(config.channels.debug).send('Updating values for all users')
+			.then(message => {
+				checkRanks(message);
+			});
+	}, null, true, config.timeZone);
+	job.start();
+}
+
 
 async function checkAuth(summonerID) {
 	const authURL = `https://euw1.api.riotgames.com/lol/platform/v4/third-party-code/by-summoner/${summonerID}`;
@@ -59,6 +75,21 @@ async function getData(url) {
 		}
 	} catch (error) {
 		throw new Error(error);
+	}
+}
+
+function checkRanks(message) {
+	console.log('Checking ranks for all players: ');
+	let players = db.get('players').value();
+
+	for (let player of players) {
+		let discordUser = message.guild.members.find(m => m.id === player.discordID);
+		let displayName = discordUser.displayName;
+
+		setRoleByRank(message, null, player.summonerID, player.discordID, player)
+			.then(result => {
+				message.reply(`${displayName}: ${result}`);
+			});
 	}
 }
 
@@ -87,40 +118,54 @@ function updatePlayer(id, args) {
 		.write();
 }
 
-async function setRoleByRank(message, args) {
+async function setRoleByRank(message, args, summonerID = null, discordID = null, player = null) {
 	if (message.channel.id === config.channels.role || message.channel.id === config.channels.debug) {
-		let summonerData = await getSummonerData(args);
+		if (!summonerID) {
+			try {
+				let summonerData = await getSummonerData(args);
+				summonerID = summonerData.id;
+			} catch (error) {
+				console.error(`Error trying to get summoner data: ${error}`);
+				return 'I couldn\'t find a summoner with that name!';
+			}
+		}
+
+		if (!discordID) {
+			discordID = message.author.id;
+		}
+
+		if (!player) {
+			player = getPlayer(discordID);
+		}
 
 		let reply = '';
-
 		let authenticated = false;
-		let player = getPlayer(message.author.id);
 
 		if (player) {
 			authenticated = player.authenticated;
 		} else {
 			let authCode = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 			db.get('players')
-				.push({ discordID: message.author.id, summonerID: summonerData.id, authCode: authCode, authenticated: false, rank: null })
+				.push({ discordID: discordID, summonerID: summonerID, authCode: authCode, authenticated: false, rank: null })
 				.write();
 		}
 
-		if (summonerData.id !== player.summonerID) {
+		if (summonerID !== player.summonerID) {
 			reply += 'your Summoner Name has been changed! Resetting account authentication... \n\n';
 
 			authenticated = false;
-			updatePlayer(message.author.id, { authenticated: false, summonerID: summonerData.id });
-			player = getPlayer(message.author.id);
+			updatePlayer(discordID, { authenticated: false, summonerID: summonerID });
+			player = getPlayer(discordID);
 		}
 
 		if (!authenticated) {
 			try {
-				let authData = await checkAuth(summonerData.id);
+				let authData = await checkAuth(summonerID);
 
 				if(authData === player.authCode) {
 					reply += 'I\'ve verified the ownership on that account! Grabbing your rank now... \n\n';
 					authenticated = true;
-					updatePlayer(message.author.id, { authenticated: true });
+					updatePlayer(discordID, { authenticated: true });
 				} else {
 					throw new Error('Invalid auth');
 				}
@@ -138,10 +183,11 @@ async function setRoleByRank(message, args) {
 		}
 
 		if (authenticated) {
-			const rankDataURL = `https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerData.id}`;
+			const rankDataURL = `https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}`;
 
-			getData(rankDataURL)
+			let addToReply = await getData(rankDataURL)
 				.then(rankData => {
+					let dataReply = '';
 					let soloQueueRankData = null;
 
 					for (let data of rankData) {
@@ -154,13 +200,13 @@ async function setRoleByRank(message, args) {
 						const formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
 
 						const role = message.guild.roles.find(r => r.name === formattedTier);
-						const member = message.member;
+						const member = message.guild.members.find(m => m.id === discordID);
 
-						updatePlayer(message.author.id, { rank: formattedTier });
-						player = getPlayer(message.author.id);
+						updatePlayer(discordID, { rank: formattedTier });
+						player = getPlayer(discordID);
 
-						if(message.member.roles.has(role.id)) {
-							reply += 'You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. You already have that role!';
+						if(member.roles.has(role.id)) {
+							dataReply += 'You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. You already have that role!';
 						} else {
 							for (let rank of ranks) {
 								let currRank = message.guild.roles.find(r => r.name === rank);
@@ -171,28 +217,31 @@ async function setRoleByRank(message, args) {
 							}
 
 							member.addRole(role).catch(console.error);
-							reply += 'You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. Assigning role!';
+							dataReply += 'You are currently ' + formattedTier + ' ' + soloQueueRankData.rank + '. Assigning role!';
 						}
 					} else {
-						reply += 'I can\'t find a Solo Queue rank for that summoner name! Please try again in a few minutes, ' +
+						dataReply += 'I can\'t find a Solo Queue rank for that summoner name! Please try again in a few minutes, ' +
 							`or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
 
-						updatePlayer(message.author.id, { rank: null });
+						updatePlayer(discordID, { rank: null });
 
-						player = getPlayer(message.author.id);
+						player = getPlayer(discordID);
 					}
-					message.reply(reply);
+					return dataReply;
 				})
 				.catch(error => {
-					reply += 'There was an error processing the request! Please try again in a few minutes, ' +
+					let dataReply = 'There was an error processing the request! Please try again in a few minutes, ' +
 						`or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
 
-					console.error(error);
+					console.error(`Error getting ranked data: ${error}`);
 
-					message.reply(reply);
+					return dataReply;
 				});
+
+			reply += addToReply;
+			return reply;
 		} else {
-			message.reply(reply);
+			return reply;
 		}
 	}
 }
