@@ -158,6 +158,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
 			db.get('players')
 				.push({ discordID: discordID, summonerID: summonerID, authCode: authCode, authenticated: false, rank: null })
 				.write();
+			player = getPlayer(discordID);
 		}
 
 		if (summonerID !== player.summonerID) {
