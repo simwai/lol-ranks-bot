@@ -212,6 +212,8 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
 
 						const role = message.guild.roles.find(r => r.name === formattedTier);
 						const member = message.guild.members.find(m => m.id === discordID);
+						console.log(role);
+						console.log(member);
 
 						updatePlayer(discordID, { rank: formattedTier });
 						player = getPlayer(discordID);
