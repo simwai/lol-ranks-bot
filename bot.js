@@ -41,7 +41,7 @@ client.on('message', async message => {
 			setRoleByRank(message, args)
 				.then(reply => {
 					message.reply(reply);
-				})
+				}),
 		);
 		break;
 	default:
@@ -98,7 +98,7 @@ function checkRanks(message) {
 			setRoleByRank(message, null, player.summonerID, player.discordID, player)
 				.then(result => {
 					message.reply(`${displayName}: ${result}`);
-				})
+				}),
 		);
 	}
 }
