@@ -243,7 +243,8 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
 					let dataReply = 'There was an error processing the request! Please try again in a few minutes, ' +
 						`or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
 
-					console.error(`Error getting ranked data: ${error}`);
+					console.error('Error getting ranked data: \n');
+					console.trace(error);
 
 					return dataReply;
 				});
