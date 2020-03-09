@@ -158,6 +158,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
 			db.get('players')
 				.push({ discordID: discordID, summonerID: summonerID, authCode: authCode, authenticated: false, rank: null })
 				.write();
+			player = getPlayer(discordID);
 		}
 
 		if (summonerID !== player.summonerID) {
@@ -183,7 +184,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
 				reply += 'I was unable to authenticate ownership of this account! \n' +
 					'Please authenticate your account: \n' +
 					'1.  Click the Settings Icon from the League of Legends client. \n' +
-					`2. Navigate to Verification, then enter the following code: \`${player.authCode}\` \n` +
+					`2. Navigate to Verification, then enter the following code: \`${player.authCode}\`\n` +
 					'3. Press save \n' +
 					'4. Wait a few minutes, then try to get your role again! \n \n' +
 					'if you\'ve already done this, try again in a few minutes, or contact an admin via' +
