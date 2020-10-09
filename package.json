@@ -2,15 +2,6 @@
   "name": "lol-ranks-bot",
   "version": "0.1.4",
   "description": "A Discord bot to assign roles based on League of Legends Rank",
-  "main": "bot.js",
-  "scripts": {
-    "start": "nodemon bot.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AlthalusAvan/lol-ranks-bot.git"
-  },
   "keywords": [
     "Discord",
     "Bot",
@@ -18,12 +9,22 @@
     "of",
     "Legends"
   ],
-  "author": "AlthalusAvan",
-  "license": "MIT",
+  "homepage": "https://github.com/AlthalusAvan/lol-ranks-bot#readme",
   "bugs": {
     "url": "https://github.com/AlthalusAvan/lol-ranks-bot/issues"
   },
-  "homepage": "https://github.com/AlthalusAvan/lol-ranks-bot#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlthalusAvan/lol-ranks-bot.git"
+  },
+  "license": "MIT",
+  "author": "AlthalusAvan",
+  "main": "bot.js",
+  "scripts": {
+    "lint": "eslint --ext .js,.json,.eslintrc,.babelrc --fix .",
+    "start": "nodemon bot.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "bottleneck": "^2.19.5",
     "cron": "^1.8.2",
@@ -32,6 +33,11 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-json": "^2.1.2",
+    "eslint-plugin-json-format": "^2.0.1",
     "nodemon": "^2.0.2"
   }
 }
