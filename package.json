@@ -21,9 +21,11 @@
   "author": "AlthalusAvan",
   "main": "bot.js",
   "scripts": {
+    "always-debug": "nodemon --inspect --trace-warnings bot.js",
+    "debug": "node --inspect --trace-warnings bot.js",
     "lint": "eslint --ext .js,.json,.eslintrc,.babelrc --fix .",
-    "start": "nodemon bot.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node bot.js",
+    "stop-debug": "taskkill /F /IM node.exe"
   },
   "dependencies": {
     "bottleneck": "^2.19.5",

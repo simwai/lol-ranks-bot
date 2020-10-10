@@ -129,12 +129,18 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
     if (!summonerID) {
       try {
         const summonerData = await getSummonerData(args);
+
         summonerID = summonerData.id;
       } catch (error) {
         console.error(`Error trying to get summoner data: ${error}`);
         return 'I couldn\'t find a summoner with that name!';
       }
     }
+
+    const role = message.guild.roles.find((r) => r.name === 'Verifiziert');
+    const member = message.guild.members.find((m) => m.user.username === message.author.username);
+
+    await member.addRole(role);
 
     if (!discordID) {
       discordID = message.author.id;
@@ -185,7 +191,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
 					+ `2. Navigate to Verification, then enter the following code: \`${player.authCode}\`\n`
 					+ '3. Press save \n'
 					+ '4. Wait a few minutes, then try to get your role again! \n \n'
-					+ 'if you\'ve already done this, try again in a few minutes, or contact an admin via'
+					+ 'if you\'ve already done this, try again in a few minutes, or contact an admin '
 					+ `${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
       }
     }
