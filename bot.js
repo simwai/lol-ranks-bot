@@ -48,6 +48,8 @@ client.on('message', async (message) => {
   }
 });
 
+client.user.setActivity(null, { type: 'PLAYING' });
+
 if (config.enableCronJob) {
   const job = new CronJob(config.cronTab, (() => {
     client.channels.get(config.channels.debug).send('Updating values for all users')
