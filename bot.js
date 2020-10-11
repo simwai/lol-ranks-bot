@@ -48,7 +48,7 @@ client.on('message', async (message) => {
   }
 });
 
-client.user.setActivity(null, { type: 'PLAYING' });
+client.user.setActivity('League of Legends', { type: 'PLAYING' });
 
 if (config.enableCronJob) {
   const job = new CronJob(config.cronTab, (() => {
