@@ -48,7 +48,7 @@ client.on('message', async (message) => {
   }
 });
 
-client.user.setActivity('League of Legends', { type: 'PLAYING' });
+client.user.setActivity('_rank ign', { type: 'PLAYING' });
 
 if (config.enableCronJob) {
   const job = new CronJob(config.cronTab, (() => {
