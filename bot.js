@@ -26,6 +26,8 @@ db.defaults({ players: [] })
 client.once('ready', () => {
   console.clear();
   console.log('Ready!');
+
+  client.user.setActivity('_rank ign', { type: 'PLAYING' });
 });
 
 client.login(config.discordToken);
@@ -47,8 +49,6 @@ client.on('message', async (message) => {
     break;
   }
 });
-
-client.user.setActivity('_rank ign', { type: 'PLAYING' });
 
 if (config.enableCronJob) {
   const job = new CronJob(config.cronTab, (() => {
