@@ -30,7 +30,7 @@
   "dependencies": {
     "bottleneck": "^2.19.5",
     "cron": "^1.8.2",
-    "discord.js": "^11.5.0",
+    "discord.js": "latest",
     "lowdb": "^1.0.0",
     "node-fetch": "^2.6.0"
   },

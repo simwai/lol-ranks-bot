@@ -52,7 +52,7 @@ client.on('message', async (message) => {
 
 if (config.enableCronJob) {
   const job = new CronJob(config.cronTab, (() => {
-    client.channels.get(config.channels.debug).send('Updating values for all users')
+    client.channels.cache.get(config.channels.debug).send('Updating values for all users')
       .then((message) => {
         checkRanks(message);
       });
@@ -139,10 +139,10 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
       }
     }
 
-    const role = message.guild.roles.find((r) => r.name === 'Verifiziert');
-    const member = message.guild.members.find((m) => m.user.username === message.author.username);
+    const role = message.guild.roles.cache.find((r) => r.name === 'Verifiziert');
+    const member = message.guild.members.cache.find((m) => m.user.username === message.author.username);
 
-    await member.addRole(role);
+    await member.roles.add(role);
 
     if (!discordID) {
       discordID = message.author.id;
@@ -193,8 +193,8 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
 					+ `2. Navigate to Verification, then enter the following code: \`${player.authCode}\`\n`
 					+ '3. Press save \n'
 					+ '4. Wait a few minutes, then try to get your role again! \n \n'
-					+ 'if you\'ve already done this, try again in a few minutes, or contact an admin '
-					+ `${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
+					+ 'if you\'ve already done this, try again in a few minutes, or write the problem in '
+					+ `${message.guild.channels.cache.get(config.channels.help).toString()} if the issue persists!`;
       }
     }
 
@@ -215,31 +215,31 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
           if (soloQueueRankData) {
             const formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
 
-            const role = message.guild.roles.find((r) => r.name === formattedTier);
-            const member = message.guild.members.find((m) => m.id === discordID);
+            const role = message.guild.roles.cache.find((r) => r.name === formattedTier);
+            const member = message.guild.members.cache.find((m) => m.id === discordID);
             console.log(role);
             console.log(member);
 
             updatePlayer(discordID, { rank: formattedTier });
             player = getPlayer(discordID);
 
-            if (member.roles.has(role.id)) {
+            if (member.roles.cache.has(role.id)) {
               dataReply += `You are currently ${formattedTier} ${soloQueueRankData.rank}. You already have that role!`;
             } else {
               for (const rank of ranks) {
-                const currRank = message.guild.roles.find((r) => r.name === rank);
+                const currRank = message.guild.roles.cache.find((r) => r.name === rank);
 
-                if (message.member.roles.has(currRank.id)) {
-                  member.removeRole(currRank).catch(console.error);
+                if (message.member.roles.cache.has(currRank.id)) {
+                  member.roles.remove(currRank).catch(console.error);
                 }
               }
 
-              member.addRole(role).catch(console.error);
+              member.roles.add(role).catch(console.error);
               dataReply += `You are currently ${formattedTier} ${soloQueueRankData.rank}. Assigning role!`;
             }
           } else {
             dataReply += 'I can\'t find a Solo Queue rank for that summoner name! Please try again in a few minutes, '
-							+ `or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
+							+ `or contact an admin via ${message.guild.channels.cache.get(config.channels.help).toString()} if the issue persists!`;
 
             updatePlayer(discordID, { rank: null });
 
@@ -249,7 +249,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
         })
         .catch((error) => {
           const dataReply = 'There was an error processing the request! Please try again in a few minutes, '
-						+ `or contact an admin via ${message.guild.channels.get(config.channels.help).toString()} if the issue persists!`;
+						+ `or contact an admin via ${message.guild.channels.cache.get(config.channels.help).toString()} if the issue persists!`;
 
           console.error('Error getting ranked data: \n');
           console.trace(error);
