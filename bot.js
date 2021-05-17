@@ -91,7 +91,7 @@ function checkRanks(message) {
   const players = db.get('players').value();
 
   for (const player of players) {
-    const discordUser = message.guild.members.find((m) => m.id === player.discordID);
+    const discordUser = message.guild.members.cache.find((m) => m.id === player.discordID);
     const { displayName } = discordUser;
 
     limiter.schedule(() => setRoleByRank(message, null, player.summonerID, player.discordID, player)

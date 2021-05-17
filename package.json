@@ -9,15 +9,7 @@
     "of",
     "Legends"
   ],
-  "homepage": "https://github.com/AlthalusAvan/lol-ranks-bot#readme",
-  "bugs": {
-    "url": "https://github.com/AlthalusAvan/lol-ranks-bot/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AlthalusAvan/lol-ranks-bot.git"
-  },
-  "license": "MIT",
+  "license": "CC BY-NC-SA 4.0",
   "author": "AlthalusAvan",
   "main": "bot.js",
   "scripts": {
