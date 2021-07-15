@@ -51,11 +51,17 @@ client.on('message', async (message) => {
 });
 
 if (config.enableCronJob) {
-  const job = new CronJob(config.cronTab, (() => {
-    client.channels.cache.get(config.channels.debug).send('Updating values for all users')
-      .then((message) => {
-        checkRanks(message);
-      });
+  const job = new CronJob(config.cronTab, (async () => {
+    const fetchedChannel = await client.channels.fetch(config.channels.debug);
+
+    if (fetchedChannel) {
+      const message = await fetchedChannel.send('Updating values for all users');
+
+      await checkRanks(message);
+      return;
+    }
+
+    await checkRanks();
   }), null, true, config.timeZone);
   job.start();
 }
@@ -86,18 +92,24 @@ async function getData(url) {
   }
 }
 
-function checkRanks(message) {
+async function checkRanks(message) {
   console.log('Checking ranks for all players: ');
   const players = db.get('players').value();
+  const fetchedMembers = await message.guild.members.fetch();
 
   for (const player of players) {
-    const discordUser = message.guild.members.cache.find((m) => m.id === player.discordID);
-    const { displayName } = discordUser;
+    const discordUser = fetchedMembers.find((m) => m.id === player.discordID);
 
-    limiter.schedule(() => setRoleByRank(message, null, player.summonerID, player.discordID, player)
-      .then((result) => {
-        message.reply(`${displayName}: ${result}`);
-      }));
+    if (!discordUser) continue;
+
+    const result = await limiter.schedule(() => setRoleByRank(message, null, player.summonerID, player.discordID, player));
+    const logText = `${discordUser.user.tag}: ${result}`;
+
+    if (message) {
+      await message.reply(logText);
+    }
+
+    console.log(logText);
   }
 }
 
@@ -201,65 +213,66 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
     if (authenticated) {
       const rankDataURL = `https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}`;
 
-      const addToReply = await getData(rankDataURL)
-        .then((rankData) => {
-          let dataReply = '';
-          let soloQueueRankData = null;
+      // or name rankData
 
-          for (const data of rankData) {
-            if (data.queueType === 'RANKED_SOLO_5x5') {
-              soloQueueRankData = data;
-            }
+      let rankData;
+
+      try {
+        rankData = await getData(rankDataURL);
+
+        let dataReply = '';
+        let soloQueueRankData = null;
+
+        for (const data of rankData) {
+          if (data.queueType === 'RANKED_SOLO_5x5') {
+            soloQueueRankData = data;
           }
+        }
 
-          if (soloQueueRankData) {
-            const formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
+        if (soloQueueRankData) {
+          const formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
 
-            const role = message.guild.roles.cache.find((r) => r.name === formattedTier);
-            const member = message.guild.members.cache.find((m) => m.id === discordID);
-            console.log(role);
-            console.log(member);
+          const role = message.guild.roles.cache.find((r) => r.name === formattedTier);
+          const member = message.guild.members.cache.find((m) => m.id === discordID);
 
-            updatePlayer(discordID, { rank: formattedTier });
-            player = getPlayer(discordID);
+          updatePlayer(discordID, { rank: formattedTier });
+          player = getPlayer(discordID);
 
-            if (member.roles.cache.has(role.id)) {
-              dataReply += `You are currently ${formattedTier} ${soloQueueRankData.rank}. You already have that role!`;
-            } else {
-              for (const rank of ranks) {
-                const currRank = message.guild.roles.cache.find((r) => r.name === rank);
-
-                if (message.member.roles.cache.has(currRank.id)) {
-                  member.roles.remove(currRank).catch(console.error);
-                }
-              }
-
-              member.roles.add(role).catch(console.error);
-              dataReply += `You are currently ${formattedTier} ${soloQueueRankData.rank}. Assigning role!`;
-            }
+          if (member.roles.cache.find(r => r.id === role.id)) {
+            dataReply += `You are currently ${formattedTier} ${soloQueueRankData.rank}. You already have that role!`;
           } else {
-            dataReply += 'I can\'t find a Solo Queue rank for that summoner name! Please try again in a few minutes, '
-							+ `or contact an admin via ${message.guild.channels.cache.get(config.channels.help).toString()} if the issue persists!`;
+            for (const rank of ranks) {
+              const currRank = message.guild.roles.cache.find((r) => r.name === rank);
 
-            updatePlayer(discordID, { rank: null });
+              if (member.roles.cache.find(r => r.id === currRank.id)) {
+                member.roles.remove(currRank).catch(console.error);
+              }
+            }
 
-            player = getPlayer(discordID);
+            member.roles.add(role).catch(console.error);
+            dataReply += `You are currently ${formattedTier} ${soloQueueRankData.rank}. Assigning role!`;
           }
-          return dataReply;
-        })
-        .catch((error) => {
-          const dataReply = 'There was an error processing the request! Please try again in a few minutes, '
+        } else {
+          dataReply += 'I can\'t find a Solo Queue rank for that summoner name! Please try again in a few minutes, '
+            + `or contact an admin via ${message.guild.channels.cache.get(config.channels.help).toString()} if the issue persists!`;
+
+          updatePlayer(discordID, { rank: null });
+
+          player = getPlayer(discordID);
+        }
+
+        return dataReply;
+      } catch(error) {
+        const dataReply = 'There was an error processing the request! Please try again in a few minutes, '
 						+ `or contact an admin via ${message.guild.channels.cache.get(config.channels.help).toString()} if the issue persists!`;
 
-          console.error('Error getting ranked data: \n');
-          console.trace(error);
+        console.error('Error getting ranked data: \n');
+        console.trace(error);
 
-          return dataReply;
-        });
-
-      reply += addToReply;
-      return reply;
+        return dataReply;
+      }
     }
+
     return reply;
   }
 }
