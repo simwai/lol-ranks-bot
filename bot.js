@@ -185,6 +185,8 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
       authenticated = false;
       updatePlayer(discordID, { authenticated: false, summonerID });
       player = getPlayer(discordID);
+
+      await removeAllEloRolesFromUser(discordID);
     }
 
     if (!authenticated) {
@@ -245,11 +247,11 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
               const currRank = message.guild.roles.cache.find((r) => r.name === rank);
 
               if (member.roles.cache.find(r => r.id === currRank.id)) {
-                member.roles.remove(currRank).catch(console.error);
+                await member.roles.remove(currRank);
               }
             }
 
-            member.roles.add(role).catch(console.error);
+            await member.roles.add(role);
             dataReply += `You are currently ${formattedTier} ${soloQueueRankData.rank}. Assigning role!`;
           }
         } else {
@@ -274,5 +276,27 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
     }
 
     return reply;
+  }
+}
+
+
+async function removeAllEloRolesFromUser(discordID) {
+  const elos = [
+    'Bronze',
+    'Silver',
+    'Gold',
+    'Platinum',
+    'Diamond',
+    'Master',
+    'Grandmaster',
+    'Challenger',
+  ];
+
+  for (const elo of elos) {
+    const fetchUser = client.users.fetch(discordID);
+
+    if (fetchUser.roles.find(r => r.name === elo)) {
+      await fetchUser.roles.remove(elo);
+    }
   }
 }
