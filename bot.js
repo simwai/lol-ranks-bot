@@ -295,7 +295,7 @@ async function removeAllEloRolesFromUser(discordID) {
   for (const elo of elos) {
     const fetchUser = client.users.fetch(discordID);
 
-    if (fetchUser.roles.find(r => r.name === elo)) {
+    if (fetchUser.roles.cache.find(r => r.name === elo)) {
       await fetchUser.roles.remove(elo);
     }
   }
