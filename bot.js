@@ -27,7 +27,7 @@ client.once('ready', () => {
   console.clear();
   console.log('Ready!');
 
-  client.user.setActivity('_rank ign', { type: 'PLAYING' });
+  client.user.setActivity(prefix + 'rank ign', { type: 'PLAYING' });
 });
 
 client.login(config.discordToken);
@@ -66,7 +66,6 @@ if (config.enableCronJob) {
   job.start();
 }
 
-
 async function checkAuth(summonerID) {
   const authURL = `https://euw1.api.riotgames.com/lol/platform/v4/third-party-code/by-summoner/${summonerID}`;
 
@@ -93,7 +92,6 @@ async function getData(url) {
 }
 
 async function checkRanks(message) {
-  console.log('Checking ranks for all players: ');
   const players = db.get('players').value();
   const fetchedMembers = await message.guild.members.fetch();
 
@@ -108,8 +106,6 @@ async function checkRanks(message) {
     if (message) {
       await message.reply(logText);
     }
-
-    console.log(logText);
   }
 }
 
@@ -147,7 +143,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
         summonerID = summonerData.id;
       } catch (error) {
         console.error(`Error trying to get summoner data: ${error}`);
-        return 'I couldn\'t find a summoner with that name!';
+        return 'Ich konnte diesen Beschwörernamen nicht finden.';
       }
     }
 
@@ -180,7 +176,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
     }
 
     if (summonerID !== player.summonerID) {
-      reply += 'your Summoner Name has been changed! Resetting account authentication... \n\n';
+      reply += 'Dein Beschwörername wurde geändert. Ich resette jetzt deine Authentifizierung.\n\n';
 
       authenticated = false;
       updatePlayer(discordID, { authenticated: false, summonerID });
@@ -194,28 +190,24 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
         const authData = await checkAuth(summonerID);
 
         if (authData === player.authCode) {
-          reply += 'I\'ve verified the ownership on that account! Grabbing your rank now... \n\n';
+          reply += 'Ich habe deinen Account verifiziert und hole jetzt deine Daten. \n\n';
           authenticated = true;
           updatePlayer(discordID, { authenticated: true });
         } else {
           throw new Error('Invalid auth');
         }
       } catch (error) {
-        reply += 'I was unable to authenticate ownership of this account! \n'
-					+ 'Please authenticate your account: \n'
-					+ '1.  Click the Settings Icon from the League of Legends client. \n'
-					+ `2. Navigate to Verification, then enter the following code: \`${player.authCode}\`\n`
-					+ '3. Press save \n'
-					+ '4. Wait a few minutes, then try to get your role again! \n \n'
-					+ 'if you\'ve already done this, try again in a few minutes, or write the problem in '
-					+ `${message.guild.channels.cache.get(config.channels.help).toString()} if the issue persists!`;
+        reply += 'Bitte authentifiziere deinen Account:\n'
+					+ '1. Klick auf Einstellungen im Leauge of Legends Client.\n'
+					+ `2. Gehe zu Verifizierung und gib folgenden Code ein: \`\`${player.authCode}\`\`\n`
+					+ '3. Drücke auf Speichern.\n'
+					+ `4. Warte ein paar Minuten und führe dann den Befehl \`\`${prefix}rank\`\` erneut aus.\n\n`
+					+ `Wenn es Probleme gibt, versuche es später nochmals oder melde dich beim ${message.guild.channels.cache.get(config.channels.help).toString()}!`;
       }
     }
 
     if (authenticated) {
       const rankDataURL = `https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}`;
-
-      // or name rankData
 
       let rankData;
 
@@ -241,7 +233,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
           player = getPlayer(discordID);
 
           if (member.roles.cache.find(r => r.id === role.id)) {
-            dataReply += `You are currently ${formattedTier} ${soloQueueRankData.rank}. You already have that role!`;
+            dataReply += `Du bist momentan ${formattedTier} ${soloQueueRankData.rank} und hast die Rolle bereits erhalten.`;
           } else {
             for (const rank of ranks) {
               const currRank = message.guild.roles.cache.find((r) => r.name === rank);
@@ -252,11 +244,10 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
             }
 
             await member.roles.add(role);
-            dataReply += `You are currently ${formattedTier} ${soloQueueRankData.rank}. Assigning role!`;
+            dataReply += `Du bist momentan ${formattedTier} ${soloQueueRankData.rank} und ich weiße dir jetzt die Rolle zu.`;
           }
         } else {
-          dataReply += 'I can\'t find a Solo Queue rank for that summoner name! Please try again in a few minutes, '
-            + `or contact an admin via ${message.guild.channels.cache.get(config.channels.help).toString()} if the issue persists!`;
+          dataReply += `Ich kann keinen Solo Queue Rang für diesen Beschwörernamen finden. Bitte versuche es später nochmals oder kontaktiere den ${message.guild.channels.cache.get(config.channels.help).toString()}!`;
 
           updatePlayer(discordID, { rank: null });
 
@@ -265,9 +256,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
 
         return dataReply;
       } catch(error) {
-        const dataReply = 'There was an error processing the request! Please try again in a few minutes, '
-						+ `or contact an admin via ${message.guild.channels.cache.get(config.channels.help).toString()} if the issue persists!`;
-
+        const dataReply = `Es gab einen Fehler beim Verarbeiten der Anfrage. Bitte versuche es später nochmals oder kontaktiere den ${message.guild.channels.cache.get(config.channels.help).toString()}!`;
         console.error('Error getting ranked data: \n');
         console.trace(error);
 
@@ -278,7 +267,6 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
     return reply;
   }
 }
-
 
 async function removeAllEloRolesFromUser(discordID) {
   const elos = [
