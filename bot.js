@@ -216,15 +216,20 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
 
         let dataReply = '';
         let soloQueueRankData = null;
+        let formattedTier = '';
 
         for (const data of rankData) {
           if (data.queueType === 'RANKED_SOLO_5x5') {
             soloQueueRankData = data;
+            break;
+          } else if (data.queueType === 'Unranked') {
+            formattedTier = 'Unranked';
+            break;
           }
         }
 
         if (soloQueueRankData) {
-          const formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
+          formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
 
           const role = message.guild.roles.cache.find((r) => r.name === formattedTier);
           const member = message.guild.members.cache.find((m) => m.id === discordID);
@@ -270,6 +275,8 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
 
 async function removeAllEloRolesFromUser(discordID) {
   const elos = [
+    'Unranked',
+    'Iron',
     'Bronze',
     'Silver',
     'Gold',
