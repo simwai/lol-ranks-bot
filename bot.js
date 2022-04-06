@@ -218,19 +218,22 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
         let soloQueueRankData = null;
         let formattedTier = '';
 
-        for (const data of rankData) {
-          if (data.queueType === 'RANKED_SOLO_5x5') {
-            soloQueueRankData = data;
-            break;
-          } else if (data.queueType === 'Unranked') {
-            formattedTier = 'Unranked';
-            break;
+        if (rankData.length == 0) {
+          formattedTier = 'Unranked';
+        } else {
+          for (const data of rankData) {
+            if (data.queueType === 'RANKED_SOLO_5x5') {
+              soloQueueRankData = data;
+              break;
+            }
           }
         }
 
         if (soloQueueRankData) {
           formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
+        }
 
+        if (formattedTier) {
           const role = message.guild.roles.cache.find((r) => r.name === formattedTier);
           const member = message.guild.members.cache.find((m) => m.id === discordID);
 
@@ -238,7 +241,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
           player = getPlayer(discordID);
 
           if (member.roles.cache.find(r => r.id === role.id)) {
-            dataReply += `Du bist momentan ${formattedTier} ${soloQueueRankData.rank} und hast die Rolle bereits erhalten.`;
+            dataReply += `Du bist momentan ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''} und hast die Rolle bereits erhalten.`;
           } else {
             for (const rank of ranks) {
               const currRank = message.guild.roles.cache.find((r) => r.name === rank);
@@ -249,7 +252,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
             }
 
             await member.roles.add(role);
-            dataReply += `Du bist momentan ${formattedTier} ${soloQueueRankData.rank} und ich weiße dir jetzt die Rolle zu.`;
+            dataReply += `Du bist momentan ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''} und ich weiße dir jetzt die Rolle zu.`;
           }
         } else {
           dataReply += `Ich kann keinen Solo Queue Rang für diesen Beschwörernamen finden. Bitte versuche es später nochmals oder kontaktiere den ${message.guild.channels.cache.get(config.channels.help).toString()}!`;
