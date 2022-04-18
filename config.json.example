@@ -4,7 +4,6 @@
         "debug": "CHANNELID",
         "help": "CHANNELID"
     },
-	"prefix": "!",
     "riotToken": "RIOT-API-TOKEN",
     "ranks": [
         "Iron",

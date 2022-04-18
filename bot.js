@@ -12,7 +12,6 @@ const config = require('./config.json');
 const adapter = new FileSync('players.json');
 const db = low(adapter);
 
-const { prefix } = config;
 const { ranks } = config;
 
 const limiter = new Bottleneck({
@@ -27,19 +26,21 @@ client.once('ready', () => {
   console.clear();
   console.log('Ready!');
 
-  client.user.setActivity(prefix + 'rank ign', { type: 'PLAYING' });
+  client.user.setActivity('@DGT Verifizierung Bot rank [ign]', { type: 'PLAYING' });
 });
 
 client.login(config.discordToken);
 
 client.on('message', async (message) => {
-  if (!message.content.startsWith(prefix) || message.author.bot)	return;
+  if (message.author.bot || !message.content.match(/<@(\d*)>/g))	return;
 
-  const args = message.content.slice(prefix.length).split(/ +/);
-  const command = args.shift().toLowerCase();
+  const args = message.content.replace(/<@(\d*)>/g, '').split(' ');
+  args.shift();
+  const command = args[0] ? args[0].toLowerCase() : '';
 
   switch (command) {
   case 'rank':
+    args.shift();
     limiter.schedule(() => setRoleByRank(message, args)
       .then((reply) => {
         message.reply(reply);
@@ -201,7 +202,7 @@ async function setRoleByRank(message, args, summonerID = null, discordID = null,
 					+ '1. Klick auf Einstellungen im Leauge of Legends Client.\n'
 					+ `2. Gehe zu Verifizierung und gib folgenden Code ein: \`\`${player.authCode}\`\`\n`
 					+ '3. Drücke auf Speichern.\n'
-					+ `4. Warte ein paar Minuten und führe dann den Befehl \`\`${prefix}rank\`\` erneut aus.\n\n`
+					+ '4. Warte ein paar Minuten und führe dann den Befehl ``<@711880700265103460> rank`` erneut aus.\n\n'
 					+ `Wenn es Probleme gibt, versuche es später nochmals oder melde dich beim ${message.guild.channels.cache.get(config.channels.help).toString()}!`;
       }
     }
