@@ -5,9 +5,8 @@
   "keywords": [
     "Discord",
     "Bot",
-    "League",
-    "of",
-    "Legends"
+    "League of Legends",
+    "LoL"
   ],
   "license": "CC BY-NC-SA 4.0",
   "author": "AlthalusAvan",
@@ -20,9 +19,11 @@
     "stop-debug": "taskkill /F /IM node.exe"
   },
   "dependencies": {
+    "@discordjs/rest": "^0.4.1",
     "bottleneck": "^2.19.5",
     "cron": "^1.8.2",
-    "discord.js": "latest",
+    "discord-api-types": "^0.31.2",
+    "discord.js": "^13.0.0",
     "lowdb": "^1.0.0",
     "node-fetch": "^2.6.7"
   },
