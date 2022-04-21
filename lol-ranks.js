@@ -244,20 +244,7 @@ class LoLRanks {
   }
 
   async removeAllEloRolesFromUser(discordID) {
-    const elos = [
-      'Unranked',
-      'Iron',
-      'Bronze',
-      'Silver',
-      'Gold',
-      'Platinum',
-      'Diamond',
-      'Master',
-      'Grandmaster',
-      'Challenger',
-    ];
-
-    for (const elo of elos) {
+    for (const elo of this.ranks) {
       const fetchUser = this.client.users.fetch(discordID);
 
       if (fetchUser.roles.cache.find(r => r.name === elo)) {
