@@ -1,9 +1,12 @@
 {
     "channels": {
-        "role": "CHANNELID",
-        "debug": "CHANNELID",
-        "help": "CHANNELID"
+        "role": "1251324121523523",
+        "debug": "152123421341234125",
+        "help": "13512342315151234"
     },
+    "clientId": "14212431231231541",
+    "guildId": "4152341234215680",
+    "discordToken": "DISCORD-API-TOKEN",
     "riotToken": "RIOT-API-TOKEN",
     "ranks": [
         "Iron",
@@ -16,7 +19,6 @@
         "Grandmaster",
         "Challenger"
     ],
-    "discordToken": "DISCORD-API-TOKEN",
     "timeZone": "Europe/Dublin",  
     "enableCronJob": true,
     "cronTab": "00 00 02 * * *",
