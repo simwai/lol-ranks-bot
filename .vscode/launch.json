@@ -16,7 +16,6 @@
             "smartStep": true,
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
-            "restart": true,
             "runtimeArgs": [
                 "-e",
                 "js",
@@ -30,10 +29,11 @@
             "name": "Attach Debugger to Node",
             "runtimeVersion": "16.13.2",
             "processId": "${command:PickProcess}",
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
             "smartStep": true,
-            "restart": true
+            "restart": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         },
         {
             "name": "Launch Program (nodemon)",
@@ -50,7 +50,6 @@
             ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
-            "restart": true,
             "smartStep": true,
             "skipFiles": [
                 "<node_internals>/**"
