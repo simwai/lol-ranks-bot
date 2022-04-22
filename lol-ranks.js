@@ -210,15 +210,9 @@ class LoLRanks {
             if (member.roles.cache.find(r => r.id === role.id)) {
               dataReply += `Du bist momentan ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''} und hast die Rolle bereits erhalten.`;
             } else {
-              for (const rank of this.ranks) {
-                const currRank = message.guild.roles.cache.find((r) => r.name === rank);
-
-                if (member.roles.cache.find(r => r.id === currRank.id)) {
-                  await member.roles.remove(currRank);
-                }
-              }
-
+              await this.removeAllRolesFromUser(discordID);
               await member.roles.add(role);
+
               dataReply += `Du bist momentan ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''} und ich weiße dir jetzt die Rolle zu.`;
             }
           } else {

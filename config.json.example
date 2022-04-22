@@ -8,6 +8,7 @@
     "guildId": "4152341234215680",
     "discordToken": "DISCORD-API-TOKEN",
     "riotToken": "RIOT-API-TOKEN",
+    "status": "@RankBot rank [ign]",
     "ranks": [
         "Iron",
         "Bronze",

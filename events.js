@@ -1,5 +1,6 @@
 class Events {
-  constructor(discord, lolRanks, slashCommands, db, limiter) {
+  constructor(discord, lolRanks, slashCommands, db, limiter, config) {
+    this.status = config.status;
     this.db = db;
     this.limiter = limiter;
     this.lolRanks = lolRanks;
@@ -13,7 +14,7 @@ class Events {
       console.clear();
       console.log('Ready!');
 
-      this.discord.user.setActivity('@DGT Verifizierung Bot rank [ign]', { type: 'PLAYING' });
+      this.discord.user.setActivity(this.status, { type: 'PLAYING' });
 
       this.slashCommands.init();
     });

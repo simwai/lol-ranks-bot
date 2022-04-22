@@ -22,6 +22,7 @@ const options = { intents: [
   Discord.Intents.FLAGS.GUILD_MEMBERS,
 ],
 };
+
 const client = new Discord.Client(options);
 client.login(config.discordToken);
 
@@ -35,4 +36,4 @@ db.defaults({ players: [] })
 // Init modules
 const lolRanks = new LoLRanks(client, config, db, limiter);
 const slashCommands = new SlashCommands(client, config);
-new Events(client, lolRanks, slashCommands, db, limiter);
+new Events(client, lolRanks, slashCommands, db, limiter, config);
