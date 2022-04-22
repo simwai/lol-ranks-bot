@@ -9,10 +9,10 @@
     "LoL"
   ],
   "license": "CC BY-NC-SA 4.0",
-  "author": "AlthalusAvan",
+  "author": "AlthalusAvan feat. simwai",
   "main": "bot.js",
   "scripts": {
-    "always-debug": "nodemon --inspect --trace-warnings bot.js",
+    "always-debug": "nodemon -e 'js' --inspect --trace-warnings bot.js",
     "debug": "node --inspect --trace-warnings bot.js",
     "lint": "eslint --ext .js,.json,.eslintrc,.babelrc --fix .",
     "start": "node bot.js",

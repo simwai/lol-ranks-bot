@@ -239,7 +239,7 @@ class LoLRanks {
 
   async removeAllEloRolesFromUser(discordID) {
     for (const elo of this.ranks) {
-      const fetchUser = this.client.users.fetch(discordID);
+      const fetchUser = await this.client.users.fetch(discordID);
 
       if (fetchUser.roles.cache.find(r => r.name === elo)) {
         await fetchUser.roles.remove(elo);

@@ -14,23 +14,27 @@ class SlashCommands {
     const rest = new REST({ version: '9' }).setToken(this.discordToken);
 
     for (const command of this.commands) {
-      await rest.post(
-        Routes.applicationGuildCommands(this.clientId, this.guildId),
-        { body: {
-          name: command.name,
-          type: 1,
-          description: command.description,
-          options: [
-            {
-              name: command.optionName,
-              type: 3,
-              description: command.optionDescription,
-              required: command.isRequired,
-            },
-          ],
-        },
-        },
-      ).catch(error => console.error(error));
+      try {
+        await rest.post(
+          Routes.applicationGuildCommands(this.clientId, this.guildId),
+          { body: {
+            name: command.name,
+            type: 1,
+            description: command.description,
+            options: [
+              {
+                name: command.optionName,
+                type: 3,
+                description: command.optionDescription,
+                required: command.isRequired,
+              },
+            ],
+          },
+          },
+        );
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 }
