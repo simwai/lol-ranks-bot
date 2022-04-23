@@ -1,0 +1,18 @@
+{
+  "verified": "Verificado",
+  "reply1": "Tu nombre de invocador ha sido cambiado. Restableceré tu autenticación ahora.",
+  "reply2": "Verifiqué tu cuenta y ahora estoy obteniendo tus datos.",
+  "reply3_1": "Por favor, autentica tu cuenta:",
+  "reply3_2": "1. Haz clic en Configuración en el cliente de Leauge of Legends.",
+  "reply3_3": "2. Ve a Verificación e ingresa el siguiente código: ",
+  "reply3_4": "3. Presiona guardar.",
+  "reply3_5": "4. Espera unos minutos y luego ejecuta el comando ",
+  "reply3_6": " o el comando de barra /rank de nuevo.",
+  "reply3_7": "Si hay algún problema, vuelva a intentarlo más tarde o comuníquese con ",
+  "reply4_1": "Actualmente estás",
+  "reply4_2": " y ya obtuve el rol.",
+  "reply5_1": "Actualmente estás",
+  "reply5_2": " y ahora te asigno el rol.",
+  "reply6": "No puedo encontrar un rango de cola individual para este nombre de invocador. Inténtalo de nuevo más tarde o comunícate con ",
+  "reply7": "Hubo un error al procesar la solicitud. Vuelva a intentarlo más tarde o comuníquese con el "
+}
