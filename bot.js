@@ -7,6 +7,17 @@ const config = require('./config.json');
 const { LoLRanks } = require('./lol-ranks');
 const { SlashCommands } = require('./slash-commands');
 const { Events } = require('./events');
+const i18n = require('i18n');
+const path = require('path');
+
+// Init locales
+i18n.configure({
+  locales: ['en', 'de', 'pt'],
+  directory: path.join(__dirname, 'locales'),
+  register: global,
+});
+
+i18n.setLocale(config.language);
 
 // Init limiter
 const limiter = new Bottleneck({

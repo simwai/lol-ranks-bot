@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const { URL } = require('url');
 const { CronJob } = require('cron');
+const i18n = require('i18n');
 
 class LoLRanks {
   constructor(client, config, db, limiter) {
@@ -31,7 +32,7 @@ class LoLRanks {
     }
   }
 
-
+  // TODO change to rso or profile picture change method, this api endpoint is deprecateed
   async checkAuth(summonerID) {
     const authURL = `https://euw1.api.riotgames.com/lol/platform/v4/third-party-code/by-summoner/${summonerID}`;
 
@@ -117,7 +118,7 @@ class LoLRanks {
         }
       }
 
-      const role = message.guild.roles.cache.find((r) => r.name === this.config.verified);
+      const role = message.guild.roles.cache.find((r) => r.name === i18n.__('verified'));
       const member = message.guild.members.cache.find((m) => m.user.username === (message.author?.username ?? message.user.username));
 
       await member?.roles.add(role);
@@ -146,7 +147,7 @@ class LoLRanks {
       }
 
       if (summonerID !== player.summonerID) {
-        this.reply += 'Dein Beschwörername wurde geändert. Ich resette jetzt deine Authentifizierung.\n\n';
+        this.reply += i18n.__('reply1') + '\n\n';
 
         authenticated = false;
         this.updatePlayer(discordID, { authenticated: false, summonerID });
@@ -160,19 +161,19 @@ class LoLRanks {
           const authData = await this.checkAuth(summonerID);
 
           if (authData === player.authCode) {
-            this.reply += 'Ich habe deinen Account verifiziert und hole jetzt deine Daten. \n\n';
+            this.reply += i18n.__('reply2') + '\n\n';
             authenticated = true;
             this.updatePlayer(discordID, { authenticated: true });
           } else {
             throw new Error('Invalid auth');
           }
         } catch (error) {
-          this.reply += 'Bitte authentifiziere deinen Account:\n'
-            + '1. Klick auf Einstellungen im Leauge of Legends Client.\n'
-            + `2. Gehe zu Verifizierung und gib folgenden Code ein: \`\`${player.authCode}\`\`\n`
-            + '3. Drücke auf Speichern.\n'
-            + `4. Warte ein paar Minuten und führe dann den Befehl \`\`<@${this.config.clientId}> rank\`\` oder den Slash-Befehl /rank erneut aus.\n\n`
-            + `Wenn es Probleme gibt, versuche es später nochmals oder melde dich beim ${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
+          this.reply += i18n.__('reply3_1') + '\n'
+          + i18n.__('reply3_2') + '\n'
+          + i18n.__('reply3_3') + ` \`\`${player.authCode}\`\`\n`
+          + i18n.__('reply3_4') + '\n'
+          + i18n.__('reply3_5') + `\`\`<@${this.config.clientId}> rank\`\`` + i18n.__('reply3_6') + '\n\n'
+          + i18n.__('reply3_7') + `${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
         }
       }
 
@@ -211,15 +212,15 @@ class LoLRanks {
             player = this.getPlayer(discordID);
 
             if (member.roles.cache.find(r => r.id === role.id)) {
-              this.reply += `Du bist momentan ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''} und hast die Rolle bereits erhalten.`;
+              this.reply += i18n.__('reply4_1') + `${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply4_2');
             } else {
               await this.removeAllRolesFromUser(discordID);
               await member.roles.add(role);
 
-              this.reply += `Du bist momentan ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''} und ich weiße dir jetzt die Rolle zu.`;
+              this.reply += i18n.__('reply5_1') + `${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply5_2');
             }
           } else {
-            this.reply += `Ich kann keinen Solo Queue Rang für diesen Beschwörernamen finden. Bitte versuche es später nochmals oder kontaktiere den ${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
+            this.reply += i18n.__('reply6') + `${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
 
             this.updatePlayer(discordID, { rank: null });
 
@@ -228,7 +229,7 @@ class LoLRanks {
 
           return dataReply;
         } catch(error) {
-          const dataReply = `Es gab einen Fehler beim Verarbeiten der Anfrage. Bitte versuche es später nochmals oder kontaktiere den ${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
+          const dataReply = i18n.__('reply7') + `${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
           console.error('Error getting ranked data: \n');
           console.trace(error);
 

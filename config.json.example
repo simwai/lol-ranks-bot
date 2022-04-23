@@ -21,6 +21,7 @@
         "Challenger"
     ],
     "timeZone": "Europe/Dublin",  
+    "language": "de",
     "enableCronJob": true,
     "cronTab": "00 00 02 * * *",
     "concurrentRequests": 1,
