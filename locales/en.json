@@ -1,3 +1,18 @@
 {
-  "verified": "Verified"
+  "verified": "Verified",
+  "reply1": "Your summoner name has been changed. I will reset your authentication now.",
+  "reply2": "I verified your account and now I am getting your data.",
+  "reply3_1": "Please authenticate your account:",
+  "reply3_2": "1. Click on Settings in Leauge of Legends Client.",
+  "reply3_3": "2. Go to Verification and enter the following code: ",
+  "reply3_4": "3. Press save.",
+  "reply3_5": "4. Wait a few minutes and then run the command ",
+  "reply3_6": " or the slash command /rank again.",
+  "reply3_7": "If there are any problems, please try again later or contact the ",
+  "reply4_1": "You are currently ",
+  "reply4_2": " and already got the role.",
+  "reply5_1": "You are currently ",
+  "reply5_2": " and I now assign you the role.",
+  "reply6": "I cannot find a solo queue rank for this summoner name. Please try again later or contact the ",
+  "reply7": "There was an error processing the request. Please try again later or contact the "
 }
