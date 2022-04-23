@@ -3,12 +3,11 @@ const { URL } = require('url');
 const { CronJob } = require('cron');
 
 class LoLRanks {
-  constructor(discord, config, db, limiter) {
-    this.client = discord;
+  constructor(client, config, db, limiter) {
+    this.client = client;
+    this.discord = client;
     this.config = config;
     this.db = db;
-    this.ranks = this.config.ranks;
-    this.clientId = this.config.clientId;
     this.limiter = limiter;
 
     this.startCronJob();
@@ -60,14 +59,18 @@ class LoLRanks {
 
   async checkRanks(message) {
     const players = this.db.get('players').value();
-    const fetchedMembers = await message.guild.members.fetch();
+    const fetchedMembers = await message?.guild.members.fetch();
 
     for (const player of players) {
-      const discordUser = fetchedMembers.find((m) => m.id === player.discordID);
+      const discordUser = fetchedMembers?.find((m) => m.id === player.discordID);
 
       if (!discordUser) continue;
 
-      const result = await this.limiter.schedule(() => this.setRoleByRank(message, null, player.summonerID, player.discordID, player));
+      const result = await this.limiter.schedule(() => {
+        console.log('Scheduler in lol-ranks.js triggered');
+        return this.setRoleByRank(message, null, player.summonerID, player.discordID, player);
+      });
+
       const logText = `${discordUser.user.tag}: ${result}`;
 
       if (message) {
@@ -114,10 +117,10 @@ class LoLRanks {
         }
       }
 
-      const role = message.guild.roles.cache.find((r) => r.name === 'Verifiziert');
+      const role = message.guild.roles.cache.find((r) => r.name === this.config.verified);
       const member = message.guild.members.cache.find((m) => m.user.username === (message.author?.username ?? message.user.username));
 
-      await member.roles.add(role);
+      await member?.roles.add(role);
 
       if (!discordID) {
         discordID = message.author?.id ?? message.user.id;
@@ -127,7 +130,7 @@ class LoLRanks {
         player = this.getPlayer(discordID);
       }
 
-      let reply = '';
+      this.reply = '';
       let authenticated = false;
 
       if (player) {
@@ -143,7 +146,7 @@ class LoLRanks {
       }
 
       if (summonerID !== player.summonerID) {
-        reply += 'Dein Beschwörername wurde geändert. Ich resette jetzt deine Authentifizierung.\n\n';
+        this.reply += 'Dein Beschwörername wurde geändert. Ich resette jetzt deine Authentifizierung.\n\n';
 
         authenticated = false;
         this.updatePlayer(discordID, { authenticated: false, summonerID });
@@ -157,18 +160,18 @@ class LoLRanks {
           const authData = await this.checkAuth(summonerID);
 
           if (authData === player.authCode) {
-            reply += 'Ich habe deinen Account verifiziert und hole jetzt deine Daten. \n\n';
+            this.reply += 'Ich habe deinen Account verifiziert und hole jetzt deine Daten. \n\n';
             authenticated = true;
             this.updatePlayer(discordID, { authenticated: true });
           } else {
             throw new Error('Invalid auth');
           }
         } catch (error) {
-          reply += 'Bitte authentifiziere deinen Account:\n'
+          this.reply += 'Bitte authentifiziere deinen Account:\n'
             + '1. Klick auf Einstellungen im Leauge of Legends Client.\n'
             + `2. Gehe zu Verifizierung und gib folgenden Code ein: \`\`${player.authCode}\`\`\n`
             + '3. Drücke auf Speichern.\n'
-            + `4. Warte ein paar Minuten und führe dann den Befehl \`\`<@${this.clientId}> rank\`\` oder den Slash-Befehl /rank erneut aus.\n\n`
+            + `4. Warte ein paar Minuten und führe dann den Befehl \`\`<@${this.config.clientId}> rank\`\` oder den Slash-Befehl /rank erneut aus.\n\n`
             + `Wenn es Probleme gibt, versuche es später nochmals oder melde dich beim ${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
         }
       }
@@ -208,15 +211,15 @@ class LoLRanks {
             player = this.getPlayer(discordID);
 
             if (member.roles.cache.find(r => r.id === role.id)) {
-              dataReply += `Du bist momentan ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''} und hast die Rolle bereits erhalten.`;
+              this.reply += `Du bist momentan ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''} und hast die Rolle bereits erhalten.`;
             } else {
               await this.removeAllRolesFromUser(discordID);
               await member.roles.add(role);
 
-              dataReply += `Du bist momentan ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''} und ich weiße dir jetzt die Rolle zu.`;
+              this.reply += `Du bist momentan ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''} und ich weiße dir jetzt die Rolle zu.`;
             }
           } else {
-            dataReply += `Ich kann keinen Solo Queue Rang für diesen Beschwörernamen finden. Bitte versuche es später nochmals oder kontaktiere den ${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
+            this.reply += `Ich kann keinen Solo Queue Rang für diesen Beschwörernamen finden. Bitte versuche es später nochmals oder kontaktiere den ${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
 
             this.updatePlayer(discordID, { rank: null });
 
@@ -233,15 +236,15 @@ class LoLRanks {
         }
       }
 
-      return reply;
+      return this.reply;
     }
   }
 
   async removeAllEloRolesFromUser(discordID) {
-    for (const elo of this.ranks) {
+    for (const elo of this.config.ranks) {
       const fetchUser = await this.client.users.fetch(discordID);
 
-      if (fetchUser.roles.cache.find(r => r.name === elo)) {
+      if (fetchUser?.roles.cache.find(r => r.name === elo)) {
         await fetchUser.roles.remove(elo);
       }
     }

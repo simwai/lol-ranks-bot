@@ -2,21 +2,18 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
 class SlashCommands {
-  constructor(discord, config) {
-    this.clientId = config.clientId;
-    this.guildId = config.guildId;
-    this.discordToken = config.discordToken;
-    this.discord = discord;
+  constructor(config) {
+    this.config = config;
     this.commands = [ { name: 'rank', description: 'Bekomme deine Solo Q Elo als Rolle zugewiesen.', optionName: 'ign', optionDescription: 'LoL-In-Game-Name', isRequired: true } ];
   }
 
   async init() {
-    const rest = new REST({ version: '9' }).setToken(this.discordToken);
+    const rest = new REST({ version: '9' }).setToken(this.config.discordToken);
 
     for (const command of this.commands) {
       try {
         await rest.post(
-          Routes.applicationGuildCommands(this.clientId, this.guildId),
+          Routes.applicationGuildCommands(this.config.clientId, this.config.guildId),
           { body: {
             name: command.name,
             type: 1,

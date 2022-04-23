@@ -34,11 +34,9 @@ db.defaults({ players: [] })
   .write();
 
 // Init modules
-(async function() {
-  const slashCommands = new SlashCommands(client, config);
-  slashCommands.init();
-
+(async () => {
+  const slashCommands = new SlashCommands(config);
   const lolRanks = new LoLRanks(client, config, db, limiter);
 
-  new Events(client, lolRanks, slashCommands, db, limiter, config);
+  new Events(client, lolRanks, slashCommands, db, limiter, config.status);
 })();

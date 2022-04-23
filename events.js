@@ -1,6 +1,6 @@
 class Events {
-  constructor(discord, lolRanks, slashCommands, db, limiter, config) {
-    this.status = config.status;
+  constructor(discord, lolRanks, slashCommands, db, limiter, status) {
+    this.status = status;
     this.db = db;
     this.limiter = limiter;
     this.lolRanks = lolRanks;
@@ -10,13 +10,13 @@ class Events {
   }
 
   init() {
-    this.discord.once('ready', () => {
+    this.discord.once('ready', async () => {
       console.clear();
       console.log('Ready!');
 
       this.discord.user.setActivity(this.status, { type: 'PLAYING' });
 
-      this.slashCommands.init();
+      await this.slashCommands.init();
     });
 
     this.discord.on('messageCreate', async (message) => {
@@ -50,10 +50,14 @@ class Events {
       if (Array.isArray(args))
         args.shift();
 
-      this.limiter.schedule(() => this.lolRanks.setRoleByRank(message, args)
+      this.limiter.schedule(async () => {
+        console.log('Scheduler in events.js triggered');
+        return this.lolRanks.setRoleByRank(message, args);
+      })
         .then((reply) => {
           message.reply(reply);
-        }));
+        })
+        .catch((warning) => console.warn(warning));
       break;
     default:
       break;
