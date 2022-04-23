@@ -172,7 +172,7 @@ class LoLRanks {
           + i18n.__('reply3_2') + '\n'
           + i18n.__('reply3_3') + ` \`\`${player.authCode}\`\`\n`
           + i18n.__('reply3_4') + '\n'
-          + i18n.__('reply3_5') + `\`\`<@${this.config.clientId}> rank\`\`` + i18n.__('reply3_6') + '\n\n'
+          + i18n.__('reply3_5') + `\`\`<@${this.client.application.id}> rank\`\`` + i18n.__('reply3_6') + '\n\n'
           + i18n.__('reply3_7') + `${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
         }
       }

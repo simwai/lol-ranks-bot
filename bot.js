@@ -4,8 +4,6 @@ const low = require('lowdb');
 const Bottleneck = require('bottleneck');
 const FileSync = require('lowdb/adapters/FileSync');
 const config = require('./config.json');
-const { LoLRanks } = require('./lol-ranks');
-const { SlashCommands } = require('./slash-commands');
 const { Events } = require('./events');
 const i18n = require('i18n');
 const path = require('path');
@@ -46,8 +44,5 @@ db.defaults({ players: [] })
 
 // Init modules
 (async () => {
-  const slashCommands = new SlashCommands(config);
-  const lolRanks = new LoLRanks(client, config, db, limiter);
-
-  new Events(client, lolRanks, slashCommands, db, limiter, config.status);
+  new Events(client, db, limiter, config);
 })();

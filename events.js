@@ -1,25 +1,33 @@
+const { SlashCommands } = require('./slash-commands');
+const { LoLRanks } = require('./lol-ranks');
+const { Roles } = require('./roles');
+
 class Events {
-  constructor(discord, lolRanks, slashCommands, db, limiter, status) {
-    this.status = status;
+  constructor(client, db, limiter, config) {
+    this.config = config;
     this.db = db;
     this.limiter = limiter;
-    this.lolRanks = lolRanks;
-    this.discord = discord;
-    this.slashCommands = slashCommands;
+    this.client = client;
+
     this.init();
   }
 
   init() {
-    this.discord.once('ready', async () => {
+    this.client.once('ready', async () => {
       console.clear();
       console.log('Ready!');
 
-      this.discord.user.setActivity(this.status, { type: 'PLAYING' });
+      this.client.user.setActivity(this.config.status, { type: 'PLAYING' });
 
-      await this.slashCommands.init();
+      // Init modules
+      this.lolRanks = new LoLRanks(this.client, this.config, this.db, this.limiter);
+      const roles = new Roles(this.client, this.config);
+      const slashCommands = new SlashCommands(this.config, this.client.application.id);
+      await slashCommands.init();
+      await roles.init();
     });
 
-    this.discord.on('messageCreate', async (message) => {
+    this.client.on('messageCreate', async (message) => {
       if (message.author.bot || !message.content.match(/<@(\d*)>/g))	return;
 
       const args = message.content.replace(/<@(\d*)>/g, '').split(' ');
@@ -35,7 +43,7 @@ class Events {
       }
     });
 
-    this.discord.on('interactionCreate', async (interaction) => {
+    this.client.on('interactionCreate', async (interaction) => {
       if (!interaction.isCommand()) return;
 
       if (interaction.commandName == 'rank') {
