@@ -11,6 +11,7 @@
     "riotToken": "RIOT-API-TOKEN",
     "status": "@RankBot rank [ign]",
     "ranks": [
+        "Unranked",
         "Iron",
         "Bronze",
         "Silver",
