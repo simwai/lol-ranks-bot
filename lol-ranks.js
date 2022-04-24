@@ -6,7 +6,6 @@ const i18n = require('i18n');
 class LoLRanks {
   constructor(client, config, db, limiter) {
     this.client = client;
-    this.discord = client;
     this.config = config;
     this.db = db;
     this.limiter = limiter;
@@ -34,7 +33,7 @@ class LoLRanks {
 
   // TODO change to rso or profile picture change method, this api endpoint is deprecateed
   async checkAuth(summonerID) {
-    const authURL = `https://euw1.api.riotgames.com/lol/platform/v4/third-party-code/by-summoner/${summonerID}`;
+    const authURL = `https://${this.config.region}.api.riotgames.com/lol/platform/v4/third-party-code/by-summoner/${summonerID}`;
 
     const authData = await this.getData(authURL);
 
@@ -85,7 +84,7 @@ class LoLRanks {
 
     console.log(`Getting data for ${summonerName}`);
 
-    const summonerDataURL = `https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${summonerName}`;
+    const summonerDataURL = `https://${this.config.region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${summonerName}`;
 
     const summonerData = await this.getData(summonerDataURL);
 
@@ -178,7 +177,7 @@ class LoLRanks {
       }
 
       if (authenticated) {
-        const rankDataURL = `https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}`;
+        const rankDataURL = `https://${this.config.region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}`;
 
         let rankData;
 
@@ -214,7 +213,7 @@ class LoLRanks {
             if (member.roles.cache.find(r => r.id === role.id)) {
               this.reply += i18n.__('reply4_1') + `${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply4_2');
             } else {
-              await this.removeAllRolesFromUser(discordID);
+              await this.removeAllEloRolesFromUser(discordID);
               await member.roles.add(role);
 
               this.reply += i18n.__('reply5_1') + `${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply5_2');
