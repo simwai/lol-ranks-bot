@@ -42,7 +42,6 @@ const db = low(adapter);
 db.defaults({ players: [] })
   .write();
 
-// Init modules
-(async () => {
-  new Events(client, db, limiter, config);
-})();
+// Init events and additional modules
+new Events(client, db, limiter, config);
+

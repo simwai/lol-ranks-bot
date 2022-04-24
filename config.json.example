@@ -4,7 +4,9 @@
         "debug": "152123421341234125",
         "help": "13512342315151234"
     },
-    "guildId": "4152341234215680",
+    "guildId": "125312342134234",
+    "setVerifiedRole": true,
+    "enableVerification": true,
     "discordToken": "DISCORD-API-TOKEN",
     "riotToken": "RIOT-API-TOKEN",
     "status": "@RankBot rank [ign]",
@@ -19,6 +21,7 @@
         "Grandmaster",
         "Challenger"
     ],
+    "region": "euw1",
     "timeZone": "Europe/Dublin",  
     "language": "de",
     "enableCronJob": true,

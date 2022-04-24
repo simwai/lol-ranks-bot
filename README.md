@@ -24,6 +24,8 @@ Forked from [lol-ranks-bot](https://github.com/AlthalusAvan/lol-ranks-bot#readme
 - `cronTab` = Defines how often the ranks will be updated if `enableCronJob` is `true`
 - `concurrentRequests` = Defines the number of concurrent requests to the API (See [Rate Limits](https://developer.riotgames.com/#:~:text=RATE%20LIMITS) after login)
 - `requestTime` = Set the request time in milliseconds
+- `setVerifiedRole` = Sets the verified role, when somebody has got an elo role
+- `enableVerified` = Enables summoner name verification
 
 ## LICENSE
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br/><br/><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>

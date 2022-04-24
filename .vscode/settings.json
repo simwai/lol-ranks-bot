@@ -1,3 +1,13 @@
 {
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "[json]": {
+        "editor.acceptSuggestionOnCommitCharacter": false,
+        "editor.acceptSuggestionOnEnter": "off",
+        "editor.parameterHints.enabled": false,
+        "editor.quickSuggestions": false,
+        "editor.quickSuggestionsDelay": 10,
+        "editor.suggest.snippetsPreventQuickSuggestions": false,
+        "editor.suggestOnTriggerCharacters": false,
+        "editor.wordBasedSuggestions": false,
+    }
 }
