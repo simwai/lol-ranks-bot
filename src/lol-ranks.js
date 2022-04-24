@@ -130,7 +130,7 @@ class LoLRanks {
         } catch (error) {
           console.error('Error trying to get summoner data:');
           console.trace(error);
-          return i18n.__('reply');
+          return i18n.__('reply8');
         }
       }
 

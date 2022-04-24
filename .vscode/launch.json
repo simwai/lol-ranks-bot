@@ -11,7 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\bot.js",
+            "program": "${workspaceFolder}\\src\\bot.js",
             "runtimeVersion": "16.13.2",
             "smartStep": true,
             "console": "integratedTerminal",
@@ -41,7 +41,7 @@
             "request": "launch",
             "runtimeVersion": "16.13.2",
             "runtimeExecutable": "nodemon",
-            "program": "${workspaceFolder}/bot.js",
+            "program": "${workspaceFolder}\\src\\bot.js",
             "runtimeArgs": [
                 "-e",
                 "js",
