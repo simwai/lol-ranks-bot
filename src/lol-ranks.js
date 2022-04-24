@@ -76,7 +76,7 @@ class LoLRanks {
           return this.setRoleByRank(message, null, player.summonerID, player.discordID, player);
         });
       } catch (error) {
-        console.error('Error checking ranks:');
+        console.error('Error checking ranks: \n');
         console.trace(error);
       }
 
@@ -128,8 +128,7 @@ class LoLRanks {
           const summonerData = await this.getSummonerData(args);
           summonerID = summonerData.id;
         } catch (error) {
-          console.error('Error trying to get summoner data:');
-          console.trace(error);
+          console.error('Error trying to get summoner data for ' + args);
           return i18n.__('reply8');
         }
       }
@@ -196,51 +195,55 @@ class LoLRanks {
       if ((authenticated && this.config.enableVerification) || !this.config.enableVerification) {
         const rankDataURL = `https://${this.config.region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}`;
 
+        let rankData = '';
+
         try {
-          let rankData = await this.getData(rankDataURL);
-          let soloQueueRankData = null;
-          let formattedTier = '';
-
-          if (rankData.length == 0) {
-            formattedTier = 'Unranked';
-          } else {
-            for (const data of rankData) {
-              if (data.queueType === 'RANKED_SOLO_5x5') {
-                soloQueueRankData = data;
-                break;
-              }
-            }
-          }
-
-          if (soloQueueRankData) {
-            formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
-          }
-
-          if (formattedTier) {
-            const role = message.guild.roles.cache.find((r) => r.name === formattedTier);
-
-            this.updatePlayer(discordID, { rank: formattedTier });
-            player = this.getPlayer(discordID);
-
-            if (member.roles.cache.find(r => r.id === role.id)) {
-              reply += i18n.__('reply4_1') + `${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply4_2');
-            } else {
-              await this.removeAllEloRolesFromUser(discordID);
-              await member.roles.add(role);
-
-              reply += i18n.__('reply5_1') + `${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply5_2');
-            }
-          } else {
-            reply += i18n.__('reply6') + `${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
-
-            this.updatePlayer(discordID, { rank: null });
-            player = this.getPlayer(discordID);
-          }
+          rankData = await this.getData(rankDataURL);
         } catch(error) {
           console.error('Error getting ranked data: \n');
           console.trace(error);
 
           reply = i18n.__('reply7') + `${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
+          return reply;
+        }
+
+        let soloQueueRankData = null;
+        let formattedTier = '';
+
+        if (rankData.length == 0) {
+          formattedTier = 'Unranked';
+        } else {
+          for (const data of rankData) {
+            if (data.queueType === 'RANKED_SOLO_5x5') {
+              soloQueueRankData = data;
+              break;
+            }
+          }
+        }
+
+        if (soloQueueRankData) {
+          formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
+        }
+
+        if (formattedTier) {
+          const role = message.guild.roles.cache.find((r) => r.name === formattedTier);
+
+          this.updatePlayer(discordID, { rank: formattedTier });
+          player = this.getPlayer(discordID);
+
+          if (member.roles.cache.find(r => r.id === role.id)) {
+            reply += i18n.__('reply4_1') + `${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply4_2');
+          } else {
+            await this.removeAllEloRolesFromUser(discordID);
+            await member.roles.add(role);
+
+            reply += i18n.__('reply5_1') + `${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply5_2');
+          }
+        } else {
+          reply += i18n.__('reply6') + `${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
+
+          this.updatePlayer(discordID, { rank: null });
+          player = this.getPlayer(discordID);
         }
       }
 
