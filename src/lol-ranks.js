@@ -34,9 +34,7 @@ class LoLRanks {
   // TODO change to rso or profile picture change method, this api endpoint is deprecateed
   async checkAuth(summonerID) {
     const authURL = `https://${this.config.region}.api.riotgames.com/lol/platform/v4/third-party-code/by-summoner/${summonerID}`;
-
     const authData = await this.getData(authURL);
-
     return authData;
   }
 
@@ -90,13 +88,10 @@ class LoLRanks {
 
   async getSummonerData(args) {
     const summonerName = Array.isArray(args) ? args.join('') : args;
-
     console.log(`Getting data for ${summonerName}`);
 
     const summonerDataURL = `https://${this.config.region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${summonerName}`;
-
     const summonerData = await this.getData(summonerDataURL);
-
     return summonerData;
   }
 
