@@ -16,7 +16,7 @@
   "reply6": "I cannot find a solo queue rank for this summoner name. Please try again later or contact the ",
   "reply7": "There was an error processing the request. Please try again later or contact the ",
   "reply8": "I couldn't find that summoner name.",
-  "ranks": {
+  "ranks": [{
     "Unranked":"Unranked",
     "Iron":"Iron",
     "Bronze":"Bronze",
@@ -27,5 +27,5 @@
     "Master":"Master",
     "Grandmaster":"Grandmaster",
     "Challenger":"Challenger"
-  }
+  }]
 }
