@@ -20,8 +20,8 @@ class Events {
       this.client.user.setActivity(this.config.status, { type: 'PLAYING' });
 
       // Init modules
-      this.lolRanks = new LoLRanks(this.client, this.config, this.db, this.limiter);
       const roles = new Roles(this.client, this.config);
+      this.lolRanks = new LoLRanks(this.client, this.config, this.db, this.limiter);
       const slashCommands = new SlashCommands(this.config, this.client.application.id);
       await slashCommands.init();
       await roles.init();

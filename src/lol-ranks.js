@@ -134,7 +134,9 @@ class LoLRanks {
       // Set verified role
       if (this.config.setVerifiedRole) {
         const role = message.guild.roles.cache.find((r) => r.name === i18n.__('verified'));
-        await member?.roles.add(role);
+        if (role) {
+          await member?.roles.add(role);
+        }
       }
 
       let reply = '';

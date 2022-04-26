@@ -7,14 +7,27 @@ class Roles {
   }
 
   async init() {
-    const roles = Object.values(i18n.__('ranks'));
+    const roles = Object.values(i18n.__('ranks')).reverse();
+    if (this.config.setVerifiedRole) {
     roles.push(i18n.__('verified'));
+    }
+    
+    // WARNING: THIS COMMAND DELETE ALL RANK DISCORD ROLES
+    // IT IS BEING USED FOR TESTING PURPOSES ONLY
+    /*const guild = await this.client.guilds.fetch(this.config.guildId);
+    const botRole = await guild.me.roles.botRole.name;
+    guild.roles.cache.forEach(roles => {
+      if (roles.name !== '@everyone' && roles.name !== botRole)
+        roles.delete()
+        .then(deleted => console.log(`Deleted role ${deleted.name}`))
+        .catch(console.error);
+    });*/
 
     for (const role of roles) {
       const guild = await this.client.guilds.fetch(this.config.guildId);
       const findRole = guild.roles.cache.find(r => r.name === role);
       if (!findRole) {
-        await this.client.roles.add(role);
+        await guild.roles.create({name: role});
         console.log('Created role ' + role);
       }
     }
