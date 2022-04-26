@@ -7,13 +7,13 @@ class Roles {
   }
 
   async init() {
+    //const roles = i18n.__('ranks');
     const roles = this.config.ranks;
     roles.push(i18n.__('verified'));
 
-    for (const role of this.config.ranks) {
+    for (const role of roles) {
       const guild = await this.client.guilds.fetch(this.config.guildId);
       const findRole = guild.roles.cache.find(r => r.name === role);
-
       if (!findRole) {
         await this.client.roles.add(role);
         console.log('Created role ' + role);
