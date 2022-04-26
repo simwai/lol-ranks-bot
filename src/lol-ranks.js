@@ -4,12 +4,13 @@ const { CronJob } = require('cron');
 const i18n = require('i18n');
 
 class LoLRanks {
-  constructor(client, config, db, limiter) {
+  constructor(client, config, db, limiter, enableMessages) {
     this.client = client;
     this.config = config;
     this.db = db;
     this.limiter = limiter;
-
+    this.enableMessages = enableMessages;
+    
     this.startCronJob();
   }
 
@@ -19,8 +20,8 @@ class LoLRanks {
         const fetchedChannel = await this.client.channels.fetch(this.config.channels.debug);
 
         if (fetchedChannel) {
-          const message = await fetchedChannel.send('Updating values for all users');
 
+          const message = await fetchedChannel.send('Updating values for all users');
           await this.checkRanks(message);
           return;
         }
@@ -70,7 +71,7 @@ class LoLRanks {
 
       try {
         result = await this.limiter.schedule(() => {
-          console.log('Scheduler in lol-ranks.js triggered');
+          //console.log('Scheduler in lol-ranks.js triggered');
           return this.setRoleByRank(message, null, player.summonerID, player.discordID, player);
         });
       } catch (error) {
@@ -80,7 +81,7 @@ class LoLRanks {
 
       const logText = `${discordUser.user.tag}: ${result}`;
 
-      if (message) {
+      if (message && (this.config.enableMessages)) {
         await message.reply(logText);
       }
     }
@@ -131,9 +132,8 @@ class LoLRanks {
       const member = message.guild.members.cache.find((m) => m.user.id === discordID);
 
       // Set verified role
-      const role = message.guild.roles.cache.find((r) => r.name === i18n.__('verified'));
-
       if (this.config.setVerifiedRole) {
+        const role = message.guild.roles.cache.find((r) => r.name === i18n.__('verified'));
         await member?.roles.add(role);
       }
 
@@ -149,7 +149,7 @@ class LoLRanks {
 
         this.db.get('players')
           .push({
-            discordID, summonerID, authCode, authenticated: false, rank: null,
+            discordID, summonerID, authCode, authenticated: false, tier: null, rank: null, totalValue: null,
           })
           .write();
 
@@ -163,8 +163,21 @@ class LoLRanks {
         this.updatePlayer(discordID, { authenticated: false, summonerID });
         player = this.getPlayer(discordID);
 
-        await this.removeAllEloRolesFromUser(discordID);
+        await this.removeAllEloRolesFromUser(member);
       }
+
+      if (player.tier !== null) {
+        const elos = Object.values(i18n.__('ranks'));
+        for (const elo of elos) {
+          if (elo !== player.tier) {
+            const role = member.roles.cache.some(r => r.name === elo);
+            if (role) {
+              const removeRole = member.roles.cache.find(r => r.name === elo);
+              await member.roles.remove(removeRole.id);
+            }
+          }
+        }
+      }   
 
       if (!authenticated && this.config.enableVerification) {
         try {
@@ -192,6 +205,8 @@ class LoLRanks {
 
         let rankData = '';
 
+        const roleChannel = await this.client.channels.fetch(this.config.channels.role);
+
         try {
           rankData = await this.getData(rankDataURL);
         } catch(error) {
@@ -203,10 +218,12 @@ class LoLRanks {
         }
 
         let soloQueueRankData = null;
-        let formattedTier = '';
+        let fTier = '';
 
         if (rankData.length == 0) {
-          formattedTier = 'Unranked';
+          fTier = 'Unranked';
+          let fTierTranslate = i18n.__('ranks');
+          let formattedTier = fTierTranslate[fTier];
         } else {
           for (const data of rankData) {
             if (data.queueType === 'RANKED_SOLO_5x5') {
@@ -217,27 +234,49 @@ class LoLRanks {
         }
 
         if (soloQueueRankData) {
-          formattedTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
+          fTier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
         }
 
+        let fTierTranslate = i18n.__('ranks');
+        let formattedTier = fTierTranslate[fTier];
+        
         if (formattedTier) {
           const role = message.guild.roles.cache.find((r) => r.name === formattedTier);
 
-          this.updatePlayer(discordID, { rank: formattedTier });
+          let tierValue = { "Unranked":"0", "Iron":"1", "Bronze":"2", "Silver":"3", "Gold":"4", "Platinum":"5", "Diamond":"6", "Master":"7", "Grandmaster":"8", "Challenger":"9"}
+          let rankValue = { "IV":"0", "III":"1", "II":"2", "I":"4"}
+
+          let checkValue = tierValue[fTier] + rankValue[soloQueueRankData.rank];
+
+          if (this.config.enableRankIconsOnMessage) {
+            var TierIcon = this.client.emojis.cache.find(emoji => emoji.name === fTier);
+          }
+
+          //const valor = member.guild.cache.fetch(player.totalValue);
+          
+          if (player.totalValue !== null && player.totalValue > checkValue) {
+            await roleChannel.send(`${member.user}` + i18n.__('levelDown') + `${TierIcon} ${formattedTier} ${soloQueueRankData.rank}!`);
+          }
+
+          if (player.totalValue !== null && player.totalValue < checkValue) {
+            await roleChannel.send(`${member.user}` + i18n.__('levelUp') + `${TierIcon} ${formattedTier} ${soloQueueRankData.rank}!`);
+          }
+          
+          this.updatePlayer(discordID, { tier: formattedTier, rank: soloQueueRankData.rank, totalValue: checkValue });
           player = this.getPlayer(discordID);
 
           if (member.roles.cache.find(r => r.id === role.id)) {
-            reply += i18n.__('reply4_1') + `${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply4_2');
+            reply += i18n.__('reply4_1') + `${TierIcon} ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply4_2');
           } else {
-            await this.removeAllEloRolesFromUser(discordID);
+            await this.removeAllEloRolesFromUser(member);
             await member.roles.add(role);
 
-            reply += i18n.__('reply5_1') + `${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply5_2');
+            reply += i18n.__('reply5_1') + `${TierIcon} ${formattedTier} ${soloQueueRankData ? soloQueueRankData.rank : ''}` + i18n.__('reply5_2');
           }
         } else {
           reply += i18n.__('reply6') + `${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
 
-          this.updatePlayer(discordID, { rank: null });
+          this.updatePlayer(discordID, { tier: null, rank: null });
           player = this.getPlayer(discordID);
         }
       }
@@ -245,13 +284,13 @@ class LoLRanks {
       return reply;
     }
   }
-
-  async removeAllEloRolesFromUser(discordID) {
-    for (const elo of this.config.ranks) {
-      const fetchUser = await this.client.users.fetch(discordID);
-
-      if (fetchUser?.roles.cache.find(r => r.name === elo)) {
-        await fetchUser.roles.remove(elo);
+  
+  async removeAllEloRolesFromUser(member) {
+    const elos = Object.values(i18n.__('ranks'));
+    for (const elo of elos) {
+      const role = member.roles.cache.find(r => r.name === elo);
+      if (role) {
+        await member.roles.remove(role.id);
       }
     }
   }

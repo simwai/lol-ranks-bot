@@ -7,6 +7,8 @@
     "guildId": "125312342134234",
     "setVerifiedRole": true,
     "enableVerification": true,
+    "enableMessages" : false,
+    "enableRankIconsOnMessage" : false,
     "discordToken": "DISCORD-API-TOKEN",
     "riotToken": "RIOT-API-TOKEN",
     "status": "@RankBot rank [ign]",

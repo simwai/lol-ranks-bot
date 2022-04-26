@@ -5,7 +5,8 @@ class SlashCommands {
   constructor(config, clientId) {
     this.config = config;
     this.clientId = clientId;
-    this.commands = [ { name: 'rank', description: 'Bekomme deine Solo Q Elo als Rolle zugewiesen.', optionName: 'ign', optionDescription: 'LoL-In-Game-Name', isRequired: true } ];
+    this.commands = [ { name: 'rank', description: 'Get your Solo Q elo assigned as a role.', optionName: 'ign', optionDescription: 'LoL-In-Game-Name', isRequired: true },
+    /*{ name: 'roles create', description: 'Create roles with the names of the LoL ranks.', optionName: '@user', optionDescription: 'Discord-User-Name', isRequired: true }*/ ];
   }
 
   async init() {

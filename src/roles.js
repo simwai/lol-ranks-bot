@@ -7,8 +7,7 @@ class Roles {
   }
 
   async init() {
-    //const roles = i18n.__('ranks');
-    const roles = this.config.ranks;
+    const roles = Object.values(i18n.__('ranks'));
     roles.push(i18n.__('verified'));
 
     for (const role of roles) {
