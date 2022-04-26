@@ -27,7 +27,7 @@ class Roles {
       const guild = await this.client.guilds.fetch(this.config.guildId);
       const findRole = guild.roles.cache.find(r => r.name === role);
       if (!findRole) {
-        await guild.roles.create({name: role});
+        await guild.roles.create({name: role, hoist: true});
         console.log('Created role ' + role);
       }
     }
