@@ -14,7 +14,6 @@ class Roles {
     for (const role of roles) {
       const guild = await this.client.guilds.fetch(this.config.guildId);
       const findRole = guild.roles.cache.find(r => r.name === role);
-
       if (!findRole) {
         await this.client.roles.add(role);
         console.log('Created role ' + role);

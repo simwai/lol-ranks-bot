@@ -10,7 +10,7 @@ const path = require('path');
 
 // Init locales
 i18n.configure({
-  locales: ['en', 'de', 'pt'],
+  locales: ['en', 'de', 'pt', 'es', 'ru'],
   directory: path.join(__dirname, '../locales'),
   register: global,
 });
@@ -43,4 +43,3 @@ db.defaults({ players: [] })
 
 // Init events and additional modules
 new Events(client, db, limiter, config);
-
