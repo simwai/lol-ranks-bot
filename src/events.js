@@ -20,11 +20,11 @@ class Events {
       this.client.user.setActivity(this.config.status, { type: 'PLAYING' });
 
       // Init modules
-      this.lolRanks = new LoLRanks(this.client, this.config, this.db, this.limiter);
       const roles = new Roles(this.client, this.config);
+      await roles.init();
+      this.lolRanks = new LoLRanks(this.client, this.config, this.db, this.limiter);
       const slashCommands = new SlashCommands(this.config, this.client.application.id);
       await slashCommands.init();
-      await roles.init();
     });
 
     this.client.on('messageCreate', async (message) => {
@@ -63,7 +63,9 @@ class Events {
         return this.lolRanks.setRoleByRank(message, args);
       })
         .then((reply) => {
-          message.reply(reply);
+          if (reply) {
+            message.reply(reply);
+          }
         })
         .catch((warning) => console.warn(warning));
       break;

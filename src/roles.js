@@ -7,10 +7,11 @@ class Roles {
   }
 
   async init() {
-    const roles = this.config.ranks;
+    const rankRoles = this.config.ranks;
+    const roles = [...rankRoles];
     roles.push(i18n.__('verified'));
 
-    for (const role of this.config.ranks) {
+    for (const role of roles) {
       const guild = await this.client.guilds.fetch(this.config.guildId);
       const findRole = guild.roles.cache.find(r => r.name === role);
 

@@ -9,5 +9,6 @@
         "editor.suggest.snippetsPreventQuickSuggestions": false,
         "editor.suggestOnTriggerCharacters": false,
         "editor.wordBasedSuggestions": false,
-    }
+    },
+    "bookmarks.useWorkaroundForFormatters": true
 }

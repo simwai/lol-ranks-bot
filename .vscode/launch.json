@@ -13,7 +13,6 @@
             ],
             "program": "${workspaceFolder}\\src\\bot.js",
             "runtimeVersion": "16.13.2",
-            "smartStep": true,
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
             "runtimeArgs": [
@@ -29,7 +28,6 @@
             "name": "Attach Debugger to Node",
             "runtimeVersion": "16.13.2",
             "processId": "${command:PickProcess}",
-            "smartStep": true,
             "restart": true,
             "skipFiles": [
                 "<node_internals>/**"
@@ -50,7 +48,6 @@
             ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
-            "smartStep": true,
             "skipFiles": [
                 "<node_internals>/**"
             ]
