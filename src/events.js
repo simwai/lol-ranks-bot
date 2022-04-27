@@ -2,6 +2,7 @@ const { SlashCommands } = require('./slash-commands');
 const { LoLRanks } = require('./lol-ranks');
 const { Roles } = require('./roles');
 
+
 class Events {
   constructor(client, db, limiter, config) {
     this.config = config;

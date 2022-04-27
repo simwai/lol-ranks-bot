@@ -5,55 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "node",
+            "type": "pwa-node",
             "request": "launch",
             "name": "Launch Program",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\bot.js",
-            "runtimeVersion": "16.13.2",
-            "smartStep": true,
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
-            "runtimeArgs": [
-                "-e",
-                "js",
-                "--inspect",
-                "--trace-warnings"
-            ],
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach Debugger to Node",
-            "runtimeVersion": "16.13.2",
-            "processId": "${command:PickProcess}",
-            "smartStep": true,
-            "restart": true,
-            "skipFiles": [
-                "<node_internals>/**"
-            ]
-        },
-        {
-            "name": "Launch Program (nodemon)",
-            "type": "node",
-            "request": "launch",
-            "runtimeVersion": "16.13.2",
-            "runtimeExecutable": "nodemon",
-            "program": "${workspaceFolder}\\src\\bot.js",
-            "runtimeArgs": [
-                "-e",
-                "js",
-                "--inspect",
-                "--trace-warnings"
-            ],
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
-            "smartStep": true,
-            "skipFiles": [
-                "<node_internals>/**"
-            ]
+            "program": "${workspaceFolder}\\src\\bot.js"
         }
     ]
 }

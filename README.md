@@ -15,6 +15,9 @@ Forked from [lol-ranks-bot](https://github.com/AlthalusAvan/lol-ranks-bot#readme
 ## Settings
 
 - `channels` = Set the ID of the channels that will be used for the Bot to send the messages
+  - `role` - Default channel for bot messages (required)
+  - `debug` - Default channel for bot logs/debug messages (required)
+  - `help` - Default channel to help members with bot-related issues (optional)
 - `guildID` = ID of your server ([Tutorial](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-))
 - `discordToken` = Tokens of your bot, used to authorize API requests and carry all of your bot user’s permissions ([Tutorial](https://discord.com/developers/docs/getting-started#configuring-a-bot))
 - `riotToken` = Riot development API key ([Tutorial](https://developer.riotgames.com/docs/lol#:~:text=Before%20you%20start%20reading%20this%20documentation%20you%20need%20to%20first%20login%20with%20your%20Riot%20Games%20account.%20Once%20you%20do,%20a%20Developer%20Portal%20account%20is%20created%20for%20you!%20This%20action%20also%20generates%20a%20basic%20development%20API%20key%20that%20is%20associated%20with%20your%20account.))
@@ -25,9 +28,9 @@ Forked from [lol-ranks-bot](https://github.com/AlthalusAvan/lol-ranks-bot#readme
 - `concurrentRequests` = Defines the number of concurrent requests to the API (See [Rate Limits](https://developer.riotgames.com/#:~:text=RATE%20LIMITS) after login)
 - `requestTime` = Set the request time in milliseconds
 - `setVerifiedRole` = Sets the verified role, when somebody has got an elo role
-- `enableVerified` = Enables summoner name verification
-- `enableMessages` = Enable bot to send messages on configured channel
-- `enableRankIconsOnMessage` = Enable rank icons on messages (like this <img alt="Challenger Icon" style="width:18px" src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/challenger.png"/> (You need to add custom emojis on your server ([Tutorial](https://support.discord.com/hc/en-us/articles/360036479811-Custom-Emojis))). The icons are inside the `assets/img` folder (Please do not change the name of the icons or the bot will not be able to identify them)
+- `enableVerification` = Enables summoner name verification
+- `enableTierUpdateMessages` = Enable bot to send messages on configured channel for rank up/down
+- `enableTierIconsOnMessages` = Enable rank icons on messages (like this <img alt="Challenger Icon" style="width:18px" src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/challenger.png"/> (You need to add custom emojis on your server ([Tutorial](https://support.discord.com/hc/en-us/articles/360036479811-Custom-Emojis))). The icons are inside the `assets/img` folder (Please do not change the name of the icons or the bot will not be able to identify them)
 
 ## LICENSE
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br/><br/><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
