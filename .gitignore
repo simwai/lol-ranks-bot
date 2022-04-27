@@ -65,3 +65,6 @@ typings/
 
 # Old files
 *.old
+
+# VS Code debugger
+.vscode/launch.json
