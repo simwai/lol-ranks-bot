@@ -2,7 +2,6 @@ const { SlashCommands } = require('./slash-commands');
 const { LoLRanks } = require('./lol-ranks');
 const { Roles } = require('./roles');
 
-
 class Events {
   constructor(client, db, limiter, config) {
     this.config = config;
@@ -21,8 +20,8 @@ class Events {
       this.client.user.setActivity(this.config.status, { type: 'PLAYING' });
 
       // Init modules
-      const roles = new Roles(this.client, this.config);
       this.lolRanks = new LoLRanks(this.client, this.config, this.db, this.limiter);
+      const roles = new Roles(this.client, this.config);
       const slashCommands = new SlashCommands(this.config, this.client.application.id);
       await slashCommands.init();
       await roles.init();
@@ -60,7 +59,6 @@ class Events {
         args.shift();
 
       this.limiter.schedule(async () => {
-        console.log('Scheduler in events.js triggered');
         return this.lolRanks.setRoleByRank(message, args);
       })
         .then((reply) => {

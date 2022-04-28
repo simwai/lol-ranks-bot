@@ -4,12 +4,11 @@ const { CronJob } = require('cron');
 const i18n = require('i18n');
 
 class LoLRanks {
-  constructor(client, config, db, limiter, enableTierUpdateMessages) {
+  constructor(client, config, db, limiter) {
     this.client = client;
     this.config = config;
     this.db = db;
     this.limiter = limiter;
-    this.enableTierUpdateMessages = enableTierUpdateMessages;
 
     this.startCronJob();
   }
@@ -133,6 +132,7 @@ class LoLRanks {
 
       const member = message.guild.members.cache.find((m) => m.user.id === discordID);
       const serverOwner = await message.guild.fetchOwner();
+      const roleChannel = await this.client.channels.fetch(this.config.channels.role);
 
       // Set verified role
       if (this.config.setVerifiedRole) {
@@ -161,8 +161,8 @@ class LoLRanks {
         player = this.getPlayer(discordID);
       }
 
-      if (summonerID !== player.summonerID) {
-        reply += i18n.__('reply1') + '\n\n';
+      if (summonerID !== null && summonerID !== player.summonerID) {
+        await message.reply(i18n.__('reply1') + '\n\n');
 
         auth = false;
         this.updatePlayer(discordID, { auth: false, summonerID });
@@ -175,10 +175,9 @@ class LoLRanks {
         const elos = Object.values(i18n.__('ranks'));
         for (const elo of elos) {
           if (elo !== player.tier) {
-            const role = member.roles.cache.some(r => r.name === elo);
+            const role = member.roles.cache.find(r => r.name === elo);
             if (role) {
-              const removeRole = member.roles.cache.find(r => r.name === elo);
-              await member.roles.remove(removeRole.id);
+              await member.roles.remove(role.id);
             }
           }
         }
@@ -209,12 +208,10 @@ class LoLRanks {
         }
       }
 
-      if ((auth && this.config.enableVerification) || !this.config.enableVerification) {
+      if ((auth && this.config.enableVerification) || !this.config.enableVerification && summonerID !== null) {
         const rankDataURL = `https://${this.config.region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}`;
 
         let rankData = '';
-
-        const roleChannel = await this.client.channels.fetch(this.config.channels.role);
 
         try {
           rankData = await this.getData(rankDataURL);
@@ -229,11 +226,11 @@ class LoLRanks {
           return reply;
         }
 
-        let soloQueueRankData = '';
-        let tierData = '';
+        let soloQueueRankData = null;
+        let tier = '';
 
         if (rankData.length == 0) {
-          tierData = 'Unranked';
+          tier = 'Unranked';
         } else {
           for (const data of rankData) {
             if (data.queueType === 'RANKED_SOLO_5x5') {
@@ -243,66 +240,47 @@ class LoLRanks {
           }
         }
 
-        let soloQueueData = '';
+        if (soloQueueRankData) {
+          tier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
+        }
+
         let checkValue = '';
         let tierValue = { 'Unranked':'0', 'Iron':'1', 'Bronze':'2', 'Silver':'3', 'Gold':'4', 'Platinum':'5', 'Diamond':'6', 'Master':'7', 'Grandmaster':'8', 'Challenger':'9' };
         let rankValue = { 'IV':'0', 'III':'1', 'II':'2', 'I':'4' };
 
-        if (tierData === 'Unranked') {
-          checkValue = tierValue[tierData];
-          soloQueueData = '';
+        if (tier === 'Unranked') {
+          checkValue = tierValue[tier];
         } else {
-          tierData = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
-          soloQueueData = soloQueueRankData.rank;
-          checkValue = tierValue[tierData] + rankValue[soloQueueData];
+          tier = soloQueueRankData.tier.charAt(0) + soloQueueRankData.tier.slice(1).toLowerCase();
+          checkValue = tierValue[tier] + rankValue[soloQueueRankData?.rank];
         }
-
+        // Translate the tier value
         let tierLocale = i18n.__('ranks');
-        let translatedTier = tierLocale[tierData];
+        let translatedTier = tierLocale[tier];
 
         if (translatedTier) {
           const role = message.guild.roles.cache.find((r) => r.name === translatedTier);
-          const TierIcon = this.client.emojis.cache.find(emoji => emoji.name === tierData);
+          const tierIcon = this.client.emojis.cache.find(emoji => emoji.name === tier);
           // Compare checkValue with player.totalValue
-          if (this.config.enableTierIconsOnMessages) {
-            if (player.totalValue !== null && player.totalValue > checkValue) {
-              await roleChannel.send(`${member.user}` + i18n.__('levelDown') + `${TierIcon} **${translatedTier} ${soloQueueData}**!`);
-            }
 
-            if (player.totalValue !== null && player.totalValue < checkValue) {
-              await roleChannel.send(`${member.user}` + i18n.__('levelUp') + `${TierIcon} **${translatedTier} ${soloQueueData}**!`);
-            }
-
-          } else {
-
-            if (player.totalValue !== null && player.totalValue > checkValue) {
-              await roleChannel.send(`${member.user}` + i18n.__('levelDown') + `**${translatedTier} ${soloQueueData}**!`);
-            }
-
-            if (player.totalValue !== null && player.totalValue < checkValue) {
-              await roleChannel.send(`${member.user}` + i18n.__('levelUp') + `**${translatedTier} ${soloQueueData}**!`);
-            }
+          if (player.totalValue !== null && player.totalValue > checkValue) {
+            await roleChannel.send(`${member.user}` + i18n.__('levelDown') + `${tierIcon ? tierIcon : ''} **${translatedTier} ${soloQueueRankData?.rank ?? ''}**!`);
+          }
+          if (player.totalValue !== null && player.totalValue < checkValue) {
+            await roleChannel.send(`${member.user}` + i18n.__('levelUp') + `${tierIcon ? tierIcon : ''} **${translatedTier} ${soloQueueRankData?.rank ?? ''}**!`);
           }
 
 
           // Updates player tier, rank and totalValue
-          this.updatePlayer(discordID, { tier: translatedTier, rank: soloQueueData, totalValue: checkValue });
+          this.updatePlayer(discordID, { tier: translatedTier, rank: soloQueueRankData?.rank, totalValue: checkValue });
           player = this.getPlayer(discordID);
 
           if (member.roles.cache.find(r => r.id === role.id)) {
-            if (this.config.enableTierIconsOnMessages) {
-              reply += i18n.__('reply4_1') + `${TierIcon} ${translatedTier}` + ` ${soloQueueRankData ? soloQueueData : ''} ` + i18n.__('reply4_2');
-            } else {
-              reply += i18n.__('reply4_1') + `${translatedTier}` + ` ${soloQueueRankData ? soloQueueData : ''} ` + i18n.__('reply4_2');
-            }
+            reply += i18n.__('reply4_1') + `${tierIcon ? tierIcon : ''} ${translatedTier} ${soloQueueRankData ? soloQueueRankData?.rank : ''} ` + i18n.__('reply4_2');
           } else {
             await this.removeAllEloRolesFromUser(member);
             await member.roles.add(role);
-            if (this.config.enableTierIconsOnMessages) {
-              reply += i18n.__('reply5_1') + `${TierIcon} ${translatedTier}` + ` ${soloQueueRankData ? soloQueueData : ''} ` + i18n.__('reply5_2');
-            } else {
-              reply += i18n.__('reply5_1') + `${translatedTier}` + ` ${soloQueueRankData ? soloQueueData : ''} ` + i18n.__('reply5_2');
-            }
+            reply += i18n.__('reply5_1') + `${tierIcon ? tierIcon : ''} ${translatedTier} ${soloQueueRankData ? soloQueueRankData?.rank : ''} ` + i18n.__('reply5_2');
           }
         } else {
           if (this.config.channels.help) {
@@ -316,7 +294,7 @@ class LoLRanks {
         }
       }
 
-      return reply;
+      return;
     }
   }
 
