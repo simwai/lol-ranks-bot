@@ -4,13 +4,17 @@ A Discord bot to assign roles based on League of Legends Rank!
 
 Forked from [lol-ranks-bot](https://github.com/AlthalusAvan/lol-ranks-bot#readme)
 
+## Requirements
+- Node.js > v16.0
+- VS Code
+
 ## Installation
 
-- Install [NPM](https://nodejs.org/en/download/);
-- Clone the repo (in VS Code press CTRL + P and type `>git:clone` ([Tutorial](https://docs.microsoft.com/pt-br/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository?tabs=create-repo-command-palette%2Cinitialize-repo-activity-bar%2Ccreate-branch-command-palette%2Ccommit-changes-command-palette%2Cpush-command-palette#clone-repository)));
-- Open the terminal on project folder and type `npm install`;
-- Rename the `config.json.example` file to `config.json`;
-- Adjust your settings (tutorial below) and run `npm run-script debug`.
+- Install [NPM](https://nodejs.org/en/download/)
+- Clone the repo (in VS Code press CTRL + P and type `>git:clone` ([Tutorial](https://docs.microsoft.com/pt-br/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository?tabs=create-repo-command-palette%2Cinitialize-repo-activity-bar%2Ccreate-branch-command-palette%2Ccommit-changes-command-palette%2Cpush-command-palette#clone-repository)))
+- Open the terminal on project folder and type `npm install`
+- Rename the `config.json.example` file to `config.json`
+- Adjust your settings (tutorial below) and run `npm run-script debug`
 
 ## Settings
 
