@@ -7,15 +7,16 @@ class Roles {
   }
 
   async init() {
-    const rankRoles = this.config.ranks;
-    const roles = [...rankRoles];
-    roles.push(i18n.__('verified'));
+    const roles = Object.values(i18n.__('ranks')).reverse();
+    if (this.config.setVerifiedRole) {
+      roles.push(i18n.__('verified'));
+    }
 
     for (const role of roles) {
       const guild = await this.client.guilds.fetch(this.config.guildId);
       const findRole = guild.roles.cache.find(r => r.name === role);
       if (!findRole) {
-        await this.client.roles.add(role);
+        await guild.roles.create({ name: role, hoist: true });
         console.log('Created role ' + role);
       }
     }
