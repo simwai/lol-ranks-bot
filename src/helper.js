@@ -1,4 +1,8 @@
 class Helper {
+  constructor(client, config) {
+    this.client = client;
+    this.config = config;
+  }
 
   removeAllDiscordRoles() {
     // WARNING: THIS COMMAND DELETE ALL RANK DISCORD ROLES
