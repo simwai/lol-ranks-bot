@@ -201,14 +201,14 @@ class LoLRanks {
           + i18n.__('reply3_4') + '\n'
           + i18n.__('reply3_5') + `\`\`<@${this.client.application.id}> rank\`\` ` + i18n.__('reply3_6') + '\n\n';
           if (this.config.channels.help) {
-            +i18n.__('reply3_7') + `${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
+            +i18n.__('reply3_7') + message.guild.channels.cache.get(this.config.channels.help).toString() + '!';
           } else {
-            +i18n.__('reply3_7') + `${serverOwner}!`;
+            +i18n.__('reply3_7') + serverOwner + '!';
           }
         }
       }
 
-      if ((auth && this.config.enableVerification) || !this.config.enableVerification && summonerID !== null) {
+      if ((auth && this.config.enableVerification) || !this.config.enableVerification) {
         const rankDataURL = `https://${this.config.region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}`;
 
         let rankData = '';
@@ -219,9 +219,9 @@ class LoLRanks {
           console.error('Error getting ranked data: \n');
           console.trace(error);
           if (this.config.channels.help) {
-            await roleChannel.send(i18n.__('reply7') + `${message.guild.channels.cache.get(this.config.channels.help).toString()}!`);
+            await roleChannel.send(i18n.__('reply7') + message.guild.channels.cache.get(this.config.channels.help).toString() + '!');
           } else {
-            await roleChannel.send(i18n.__('reply7') + `${serverOwner}!`);
+            await roleChannel.send(i18n.__('reply7') + serverOwner + '!');
           }
           return reply;
         }
@@ -264,10 +264,11 @@ class LoLRanks {
           // Compare checkValue with player.totalValue
 
           if (player.totalValue !== null && player.totalValue > checkValue) {
-            await roleChannel.send(`${member.user}` + i18n.__('levelDown') + `${tierIcon ? tierIcon : ''} **${translatedTier} ${soloQueueRankData?.rank ?? ''}**!`);
+            await roleChannel.send(member.user + i18n.__('levelDown') + tierIcon ?? '' + '**' + translatedTier + ' ' + soloQueueRankData?.rank ?? '' + '**!');
+
           }
           if (player.totalValue !== null && player.totalValue < checkValue) {
-            await roleChannel.send(`${member.user}` + i18n.__('levelUp') + `${tierIcon ? tierIcon : ''} **${translatedTier} ${soloQueueRankData?.rank ?? ''}**!`);
+            await roleChannel.send(member.user + i18n.__('levelUp') + tierIcon ?? '' + '**' + translatedTier + ' ' + soloQueueRankData?.rank ?? '' + '**!');
           }
 
 
@@ -276,17 +277,17 @@ class LoLRanks {
           player = this.getPlayer(discordID);
 
           if (member.roles.cache.find(r => r.id === role.id)) {
-            reply += i18n.__('reply4_1') + `${tierIcon ? tierIcon : ''} ${translatedTier} ${soloQueueRankData ? soloQueueRankData?.rank : ''} ` + i18n.__('reply4_2');
+            reply += i18n.__('reply4_1') + tierIcon ?? '' + '**' + translatedTier + ' ' + soloQueueRankData?.rank ?? '' + ' ' + i18n.__('reply4_2');
           } else {
             await this.removeAllEloRolesFromUser(member);
             await member.roles.add(role);
-            reply += i18n.__('reply5_1') + `${tierIcon ? tierIcon : ''} ${translatedTier} ${soloQueueRankData ? soloQueueRankData?.rank : ''} ` + i18n.__('reply5_2');
+            reply += i18n.__('reply5_1') + tierIcon ?? '' + '**' + translatedTier + ' ' + soloQueueRankData?.rank ?? '' + ' ' + i18n.__('reply5_2');
           }
         } else {
           if (this.config.channels.help) {
-            reply += i18n.__('reply6') + `${message.guild.channels.cache.get(this.config.channels.help).toString()}!`;
+            reply += i18n.__('reply6') + message.guild.channels.cache.get(this.config.channels.help).toString() + '!';
           } else {
-            reply += i18n.__('reply6') + `${serverOwner}!`;
+            reply += i18n.__('reply6') + serverOwner + '!';
           }
 
           this.updatePlayer(discordID, { tier: null, rank: null });
@@ -294,7 +295,7 @@ class LoLRanks {
         }
       }
 
-      return;
+      return reply;
     }
   }
 
