@@ -59,7 +59,6 @@ class Events {
         args.shift();
 
       this.limiter.schedule(async () => {
-        console.log('Scheduler in events.js triggered');
         return this.lolRanks.setRoleByRank(message, args);
       })
         .then((reply) => {
