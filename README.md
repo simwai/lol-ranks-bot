@@ -2,8 +2,6 @@
 
 A Discord bot to assign roles based on League of Legends Rank!
 
-Forked from [lol-ranks-bot](https://github.com/AlthalusAvan/lol-ranks-bot#readme)
-
 ## Requirements
 - Node.js > v16.0
 - VS Code
