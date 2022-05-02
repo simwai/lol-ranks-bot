@@ -73,8 +73,7 @@ class LoLRanks {
         const logText = `${discordUser}: ${result}`;
 
         if (message) {
-          const roleChannel = await this.client.channels.fetch(this.config.channels.role);
-          await roleChannel.send(logText);
+          await message.reply(logText);
         }
       }
     }
@@ -153,12 +152,11 @@ class LoLRanks {
 
     const member = message.guild.members.cache.find((m) => m.user.id === discordID);
     const serverOwner = await message.guild.fetchOwner();
-    const roleChannel = await this.client.channels.fetch(this.config.channels.role);
 
     let reply = '';
     let auth = this.config.enableVerification ? player?.auth : false;
 
-    await this.removeUnusedEloRolesFromUser(player, member);
+    // await this.removeUnusedEloRolesFromUser(player, member);
 
     if (summonerID !== player.summonerID) {
       reply += i18n.__('reply1') + '\n\n';
@@ -194,7 +192,7 @@ class LoLRanks {
           + i18n.__('reply3_2') + '\n'
           + i18n.__('reply3_3') + ` \`\`${player.authCode}\`\`\n`
           + i18n.__('reply3_4') + '\n'
-          + i18n.__('reply3_5') + '``<@ + this.client.application.id + > rank``' + i18n.__('reply3_6') + '\n\n'
+          + i18n.__('reply3_5') + '``<@' + this.client.application.id + '> rank``' + i18n.__('reply3_6') + '\n\n'
           + i18n.__('reply3_7') + (!this.config.channels.help ? message.guild.channels.cache.get(this.config.channels.help).toString() : serverOwner) + '!';
       }
     }
@@ -230,6 +228,7 @@ class LoLRanks {
         'Grandmaster': '8',
         'Challenger': '9',
       };
+
       let rankValue = {
         'IV': '0',
         'III': '1',
@@ -254,9 +253,9 @@ class LoLRanks {
         // Compare checkValue with player.totalValue
         if (player.totalValue !== null) {
           if (player.totalValue > checkValue) {
-            await roleChannel.send(member.user + i18n.__('levelDown') + tierIcon ?? '' + '**' + translatedTier + ' ' + soloQueueRankData?.rank ?? '' + '**!');
+            return member.user + i18n.__('levelDown') + tierIcon ?? '' + '**' + translatedTier + ' ' + soloQueueRankData?.rank ?? '' + '**!';
           } else if (player.totalValue !== null && player.totalValue < checkValue) {
-            await roleChannel.send(member.user + i18n.__('levelUp') + tierIcon ?? '' + '**' + translatedTier + ' ' + soloQueueRankData?.rank ?? '' + '**!');
+            return member.user + i18n.__('levelUp') + tierIcon ?? '' + '**' + translatedTier + ' ' + soloQueueRankData?.rank ?? '' + '**!';
           }
         }
 
