@@ -3,10 +3,11 @@ const Discord = require('discord.js');
 const low = require('lowdb');
 const Bottleneck = require('bottleneck');
 const FileSync = require('lowdb/adapters/FileSync');
-const config = require('../config.json');
-const { Events } = require('./events');
 const i18n = require('i18n');
 const path = require('path');
+const config = require('../config.json');
+const { Events } = require('./events');
+const { DbUpgrader } = require('./db-upgrader');
 
 // Init locales
 i18n.configure({
@@ -40,6 +41,9 @@ const db = low(adapter);
 
 db.defaults({ players: [] })
   .write();
+
+// Init config validator
+new DbUpgrader();
 
 // Init events and additional modules
 new Events(client, db, limiter, config);

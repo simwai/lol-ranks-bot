@@ -22,7 +22,7 @@ class Events {
       // Init modules
       const roles = new Roles(this.client, this.config);
       await roles.init();
-      this.lolRanks = new LoLRanks(this.client, this.config, this.db, this.limiter);
+      this.lolRanks = new LoLRanks(this.client, this.config, this.db, this.limiter, roles);
       const slashCommands = new SlashCommands(this.config, this.client.application.id);
       await slashCommands.init();
     });

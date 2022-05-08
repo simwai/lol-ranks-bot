@@ -4,11 +4,12 @@ const { CronJob } = require('cron');
 const i18n = require('i18n');
 
 class LoLRanks {
-  constructor(client, config, db, limiter) {
+  constructor(client, config, db, limiter, roles) {
     this.client = client;
     this.config = config;
     this.db = db;
     this.limiter = limiter;
+    this.roles = roles;
 
     this.startCronJob();
   }
@@ -165,7 +166,7 @@ class LoLRanks {
       this.updatePlayer(discordID, { auth: false, summonerID });
       player = this.getPlayer(discordID);
 
-      await this.removeAllEloRolesFromUser(member);
+      await this.roles.removeAllEloRolesFromUser(member);
     }
 
     if (!auth && this.config.enableVerification) {
@@ -185,14 +186,12 @@ class LoLRanks {
           throw new Error('Invalid auth');
         }
       } catch (error) {
-        // TODO change translations to profile picture method
         // TODO add Done button
         // TODO check whitespaces of translations used in replies
         reply += i18n.__('reply3_1') + '\n'
           + i18n.__('reply3_2') + '\n'
           + i18n.__('reply3_3') + ` \`\`${player.authCode}\`\`\n`
-          + i18n.__('reply3_4') + '\n'
-          + i18n.__('reply3_5') + '``<@' + this.client.application.id + '> rank``' + i18n.__('reply3_6') + '\n\n'
+          + i18n.__('reply3_5') + '\n\n'
           + i18n.__('reply3_7') + (!this.config.channels.help ? message.guild.channels.cache.get(this.config.channels.help).toString() : serverOwner) + '!';
       }
     }
@@ -269,7 +268,7 @@ class LoLRanks {
         if (member.roles.cache.find(r => r.id === role.id)) {
           reply += i18n.__('reply4_1') + (tierIcon ?? '') + '**' + translatedTier + ' ' + (soloQueueRankData?.rank ?? '') + ' ' + i18n.__('reply4_2');
         } else {
-          await this.removeAllEloRolesFromUser(member);
+          await this.roles.removeAllEloRolesFromUser(member);
           await member.roles.add(role);
 
           reply += i18n.__('reply5_1') + (tierIcon ?? '') + '**' + translatedTier + ' ' + (soloQueueRankData?.rank ?? '') + ' ' + i18n.__('reply5_2');
@@ -293,30 +292,6 @@ class LoLRanks {
     }
 
     return reply;
-  }
-
-  async removeUnusedEloRolesFromUser(player, member) {
-    if (player.tier !== null) {
-      const elos = Object.values(i18n.__('ranks'));
-      for (const elo of elos) {
-        if (elo !== player.tier) {
-          const role = member.roles.cache.find(r => r.name === elo);
-          if (role) {
-            await member.roles.remove(role.id);
-          }
-        }
-      }
-    }
-  }
-
-  async removeAllEloRolesFromUser(member) {
-    const elos = Object.values(i18n.__('ranks'));
-    for (const elo of elos) {
-      const role = member.roles.cache.find(r => r.name === elo);
-      if (role) {
-        await member.roles.remove(role.id);
-      }
-    }
   }
 }
 

@@ -21,6 +21,49 @@ class Roles {
       }
     }
   }
+
+  async removeAllEloRolesFromUser(member) {
+    const elos = Object.values(i18n.__('ranks'));
+    for (const elo of elos) {
+      const role = member.roles.cache.find(r => r.name === elo);
+      if (role) {
+        await member.roles.remove(role.id);
+      }
+    }
+  }
+
+  async removeUnusedEloRolesFromUser(player, member) {
+    if (player.tier !== null) {
+      const elos = Object.values(i18n.__('ranks'));
+      for (const elo of elos) {
+        if (elo !== player.tier) {
+          const role = member.roles.cache.find(r => r.name === elo);
+          if (role) {
+            await member.roles.remove(role.id);
+          }
+        }
+      }
+    }
+  }
+
+  async removeAllDiscordRoles() {
+    // WARNING: THIS COMMAND DELETE ALL RANK DISCORD ROLES
+    // IT IS BEING USED FOR TESTING PURPOSES ONLY
+    const guild = this.client.guilds.fetch(this.config.guildId);
+    const botRole = guild.me.roles.botRole.name;
+
+    for (const roles of guild.roles.cache) {
+      if (roles.name !== '@everyone' && roles.name !== botRole) {
+        try {
+          const deleted = await roles.delete();
+          console.log(`Deleted role ${deleted.name}`);
+
+        } catch {
+          console.error;
+        }
+      }
+    }
+  }
 }
 
 module.exports = {
