@@ -1,6 +1,10 @@
+const i18n = require('i18n');
+const { MessageActionRow, MessageButton } = require('discord.js');
 const { SlashCommands } = require('./slash-commands');
 const { LoLRanks } = require('./lol-ranks');
 const { Roles } = require('./roles');
+const { DbHandler } = require('./data-handlers/db-handler');
+const { ApiHandler } = require('./data-handlers/api-handler');
 
 class Events {
   constructor(client, db, limiter, config) {
@@ -8,13 +12,14 @@ class Events {
     this.db = db;
     this.limiter = limiter;
     this.client = client;
+    this.apiHandler = ApiHandler.getInstance(this.config);
+    this.dbHandler = DbHandler.getInstance(this.db);
 
     this.init();
   }
 
   init() {
     this.client.once('ready', async () => {
-      console.clear();
       console.log('Ready!');
 
       this.client.user.setActivity(this.config.status, { type: 'PLAYING' });
@@ -44,33 +49,52 @@ class Events {
     });
 
     this.client.on('interactionCreate', async (interaction) => {
-      if (!interaction.isCommand()) return;
-
-      if (interaction.commandName == 'rank') {
-        this.executeCommand('rank', interaction.options.data[0].value, interaction);
+      if (interaction.isButton() && interaction.component.label === i18n.__('confirm')) {
+        const player = this.dbHandler.getPlayerByDiscordId(interaction.user.id);
+        const summonerData = await this.apiHandler.getSummonerDataByNameOrId({ value: player.summonerID, type: 'summmonerID' });
+        const summonerName = summonerData.name;
+        this.executeCommand('rank', summonerName, interaction, i18n.__('confirm'));
       }
+
+      if (interaction.isCommand() && interaction.commandName === 'rank')
+        this.executeCommand('rank', interaction.options.data[0].value, interaction, i18n.__('confirm'));
     });
   }
 
-  executeCommand(name, args, message) {
+  executeCommand(name, args, message, buttonText = null) {
     switch (name) {
     case 'rank':
-      if (Array.isArray(args))
-        args.shift();
-
-      this.limiter.schedule(async () => {
-        return this.lolRanks.setRoleByRank(message, args);
-      })
-        .then((reply) => {
-          if (reply) {
-            message.reply(reply);
-          }
-        })
-        .catch((warning) => console.warn(warning));
+      this.rankCommand({ value: args, type: 'summonerName' }, message, buttonText);
       break;
     default:
       break;
     }
+  }
+
+  rankCommand(args, message, buttonText) {
+    if (Array.isArray(args))
+      args.shift();
+
+    this.limiter.schedule(async () => {
+      const reply = await this.lolRanks.setRoleByRank(message, args);
+      const data = (reply === i18n.__('reply8') || reply.includes(i18n.__('reply4_1')) || reply.includes(i18n.__('reply5_1'))) ? { reply: reply, isButton: false } : { reply: reply, isButton: true };
+      return data;
+    })
+      .then(({ reply, isButton }) => {
+        if (!reply)
+          return;
+
+        const row = new MessageActionRow();
+        row.addComponents(
+          new MessageButton()
+            .setCustomId('primary')
+            .setLabel(buttonText ?? '')
+            .setStyle('PRIMARY'),
+        );
+
+        message.reply((isButton && buttonText) ? { content: reply, components: [row] } : reply);
+      })
+      .catch((warning) => console.warn(warning));
   }
 }
 

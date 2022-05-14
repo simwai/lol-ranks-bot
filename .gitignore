@@ -1,3 +1,4 @@
+# lol-ranks-bot
 .vscode/launch.json
 config.json
 players.json
@@ -69,3 +70,6 @@ typings/
 
 # VS Code debugger
 .vscode/launch.json
+
+# Snyck VS Code plugin
+.dccache

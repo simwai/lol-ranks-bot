@@ -33,8 +33,7 @@ class SlashCommands {
           },
         );
       } catch (error) {
-        console.error('Error creating slash commands:');
-        console.trace(error);
+        console.trace('Error creating slash commands', error);
       }
     }
   }

@@ -7,9 +7,9 @@ class Roles {
   }
 
   async init() {
-    const roles = Object.values(i18n.__('ranks')).reverse();
+    const roles = Object.values(i18n.__({ phrase: 'ranks', locale: this.config.eloRoleLanguage })).reverse();
     if (this.config.setVerifiedRole) {
-      roles.push(i18n.__('verified'));
+      roles.push(i18n.__('verified', { locale: this.config.verifiedRoleLanguage }));
     }
 
     for (const role of roles) {
@@ -23,7 +23,7 @@ class Roles {
   }
 
   async removeAllEloRolesFromUser(member) {
-    const elos = Object.values(i18n.__('ranks'));
+    const elos = Object.values(i18n.__({ phrase: 'ranks', locale: this.config.eloRoleLanguage }));
     for (const elo of elos) {
       const role = member.roles.cache.find(r => r.name === elo);
       if (role) {
@@ -34,7 +34,7 @@ class Roles {
 
   async removeUnusedEloRolesFromUser(player, member) {
     if (player.tier !== null) {
-      const elos = Object.values(i18n.__('ranks'));
+      const elos = Object.values(i18n.__({ phrase: 'ranks', locale: this.config.eloRoleLanguage }));
       for (const elo of elos) {
         if (elo !== player.tier) {
           const role = member.roles.cache.find(r => r.name === elo);
@@ -57,9 +57,8 @@ class Roles {
         try {
           const deleted = await roles.delete();
           console.log(`Deleted role ${deleted.name}`);
-
         } catch {
-          console.error;
+          console.trace;
         }
       }
     }

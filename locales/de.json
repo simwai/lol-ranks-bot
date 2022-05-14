@@ -11,7 +11,7 @@
 	"reply3_2": "1. Klick auf dein Profilbild im Leauge of Legends Client.",
 	"reply3_3": "2. Ändere dein Profilbild durch Klicken eines anderes Profilbildes.",
 	"reply3_5": "3. Klicke hier auf Bestätigen.",
-	"reply3_7": "Wenn es Probleme gibt, versuche es später nochmals oder melde dich beim ",
+	"reply3_7": "Wenn es Probleme gibt, versuche es später nochmals oder melde dich bei ",
 	"reply4_1": "Du bist momentan ",
 	"reply4_2": "und hast die Rolle bereits erhalten.",
 	"reply5_1": "Du bist momentan ",
@@ -30,5 +30,6 @@
 		"Master": "Meister",
 		"Grandmaster": "Großmeister",
 		"Challenger": "Herausforderer"
-	}
+	},
+	"confirm": "Bestätigen"
 }

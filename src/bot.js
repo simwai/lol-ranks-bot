@@ -11,12 +11,11 @@ const { DbUpgrader } = require('./db-upgrader');
 
 // Init locales
 i18n.configure({
+  defaultLocale: config.language,
   locales: ['en', 'de', 'pt', 'es', 'ru'],
   directory: path.join(__dirname, '../locales'),
   register: global,
 });
-
-i18n.setLocale(config.language);
 
 // Init limiter
 const limiter = new Bottleneck({
@@ -42,8 +41,11 @@ const db = low(adapter);
 db.defaults({ players: [] })
   .write();
 
-// Init config validator
-new DbUpgrader();
+(async () => {
+  // Init config validator
+  const dbUpgrader = new DbUpgrader();
+  await dbUpgrader.upgrade();
 
-// Init events and additional modules
-new Events(client, db, limiter, config);
+  // Init events and additional modules
+  new Events(client, db, limiter, config);
+})();
