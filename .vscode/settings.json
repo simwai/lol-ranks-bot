@@ -1,20 +1,21 @@
 {
-    "editor.tabSize": 2,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true,
-      "source.fixAll.tslint": true,
-      "source.fixAll.stylelint": true
-    },
-    "[json]": {
-        "editor.acceptSuggestionOnCommitCharacter": false,
-        "editor.acceptSuggestionOnEnter": "off",
-        "editor.parameterHints.enabled": false,
-        "editor.quickSuggestions": false,
-        "editor.quickSuggestionsDelay": 10,
-        "editor.suggest.snippetsPreventQuickSuggestions": false,
-        "editor.suggestOnTriggerCharacters": false,
-        "editor.wordBasedSuggestions": false,
-    },
-    "bookmarks.useWorkaroundForFormatters": true
+  "editor.tabSize": 2,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.fixAll.tslint": true,
+    "source.fixAll.stylelint": true
+  },
+  "[json]": {
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.parameterHints.enabled": false,
+    "editor.quickSuggestions": false,
+    "editor.quickSuggestionsDelay": 10,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestOnTriggerCharacters": false,
+    "editor.wordBasedSuggestions": false,
+  },
+  "bookmarks.useWorkaroundForFormatters": true
 }

@@ -1,19 +1,25 @@
 {
 	"extends": [
-		"eslint:recommended"
+		"standard",
+		"eslint:recommended",
+		"plugin:promise/recommended"
 	],
 	"plugins": [
 		"json-format"
 	],
 	"env": {
 		"node": true,
-		"es6": true,
-		"es2021": true
+		"es2022": true
 	},
 	"parserOptions": {
 		"sourceType": "module"
 	},
 	"rules": {
+		"strict": 0,
+		"indent": [
+			"error",
+			2
+		],
 		"camelcase": "error",
 		"brace-style": [
 			"error",
@@ -22,20 +28,11 @@
 				"allowSingleLine": true
 			}
 		],
-		"comma-dangle": [
-			"error",
-			"always-multiline"
-		],
 		"comma-spacing": "error",
 		"comma-style": "error",
 		"dot-location": [
 			"error",
 			"property"
-		],
-		"handle-callback-err": "off",
-		"indent": [
-			"error",
-			2
 		],
 		"max-nested-callbacks": [
 			"error",
@@ -49,7 +46,6 @@
 				"max": 2
 			}
 		],
-		"no-console": "off",
 		"no-empty-function": "error",
 		"no-floating-decimal": "error",
 		"no-inline-comments": "error",
@@ -66,18 +62,26 @@
 		"no-trailing-spaces": [
 			"error"
 		],
+		"curly": "off",
+		"no-unused-vars": [
+			"error",
+			{
+				"argsIgnorePattern": "(_.*)"
+			}
+		],
 		"no-var": "error",
 		"object-curly-spacing": [
 			"error",
 			"always"
 		],
+		"no-new": "off",
 		"quotes": [
 			"error",
 			"single"
 		],
 		"semi": [
 			"error",
-			"always"
+			"never"
 		],
 		"space-before-blocks": "error",
 		"space-before-function-paren": [
@@ -92,12 +96,13 @@
 		"space-infix-ops": "error",
 		"space-unary-ops": "error",
 		"spaced-comment": "error",
-		"yoda": "error"
+		"yoda": "error",
+		"promise/always-return": "off"
 	},
 	"settings": {
 		"json/sort-package-json": "standard",
 		"json/ignore-files": [
-			"**/package-lock.json"
+			"package-lock.json"
 		],
 		"json/json-with-comments-files": [
 			"**/tsconfig.json",
