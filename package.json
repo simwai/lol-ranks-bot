@@ -1,6 +1,6 @@
 {
   "name": "lol-ranks-bot",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "description": "A Discord bot to assign roles based on League of Legends Rank",
   "keywords": [
     "Discord",
@@ -12,7 +12,7 @@
   "author": "AlthalusAvan feat. simwai",
   "main": "bot.js",
   "scripts": {
-    "always-debug": "nodemon -e 'js' --inspect --trace-warnings ./src/bot.js",
+    "always-debug": "nodemon -e \"js\" --inspect --trace-warnings ./src/bot.js",
     "debug": "node --inspect --trace-warnings ./src/bot.js",
     "lint": "eslint --ext .js,.json,.eslintrc,.babelrc --fix .",
     "start": "node bot.js",

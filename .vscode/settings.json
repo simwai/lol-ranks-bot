@@ -11,7 +11,11 @@
     "editor.acceptSuggestionOnCommitCharacter": false,
     "editor.acceptSuggestionOnEnter": "off",
     "editor.parameterHints.enabled": false,
-    "editor.quickSuggestions": false,
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    },
     "editor.quickSuggestionsDelay": 10,
     "editor.suggest.snippetsPreventQuickSuggestions": false,
     "editor.suggestOnTriggerCharacters": false,
