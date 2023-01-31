@@ -15,7 +15,7 @@
     "always-debug": "nodemon -e \"js\" --inspect --trace-warnings ./src/bot.js",
     "debug": "node --inspect --trace-warnings ./src/bot.js",
     "lint": "eslint --ext .js,.json,.eslintrc,.babelrc --fix .",
-    "start": "node bot.js",
+    "start": "node ./src/bot.js",
     "stop-debug": "taskkill /F /IM node.exe"
   },
   "dependencies": {
