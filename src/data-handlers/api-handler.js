@@ -1,4 +1,4 @@
-const fetch = require('node-fetch')
+const got = require('got')
 const { URL } = require('url')
 const i18n = require('i18n')
 
@@ -16,21 +16,21 @@ class ApiHandler {
   }
 
   async getData(url) {
+    let response
+
     try {
-      const response = await fetch(new URL(url), {
+      url = new URL(url)
+      response = await got(url, {
+        method: 'GET',
         headers: {
-          'X-Riot-Token': this.config.riotToken
+          'X-Riot-Token': this.config.riotToken,
+          Host: url.host
         }
-      })
+      }).json()
 
-      if (response.ok) {
-        const json = await response.json()
-        return json
-      }
-
-      throw new Error(url + ' ' + response.statusText)
+      return response
     } catch (error) {
-      throw new Error(error)
+      throw new Error(error + ' ' + error.response.statusCode)
     }
   }
 

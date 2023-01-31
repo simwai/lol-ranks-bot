@@ -52,7 +52,7 @@ class Events {
     this.client.on('interactionCreate', async (interaction) => {
       if (interaction.isButton() && interaction.component.label === i18n.__('confirm')) {
         const player = this.dbHandler.getPlayerByDiscordId(interaction.user.id)
-        const summonerData = await this.apiHandler.getSummonerDataByNameOrId({ value: player.summonerID, type: 'summmonerID' })
+        const summonerData = await this.apiHandler.getSummonerDataByNameOrId({ value: player.summonerID, type: 'summonerID' })
         const summonerName = summonerData.name
         this.executeCommand('rank', summonerName, interaction, i18n.__('confirm'))
       }
