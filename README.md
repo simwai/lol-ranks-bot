@@ -9,7 +9,7 @@ A Discord bot to assign roles based on League of Legends Rank!
 ## Installation
 
 - Install [NPM](https://nodejs.org/en/download/)
-- Clone the repo (in VS Code press CTRL + P and type `>git:clone` ([Tutorial](https://docs.microsoft.com/pt-br/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository?tabs=create-repo-command-palette%2Cinitialize-repo-activity-bar%2Ccreate-branch-command-palette%2Ccommit-changes-command-palette%2Cpush-command-palette#clone-repository)))
+- Clone the repo (in VS Code press CTRL + P and type `>git:clone` ([Tutorial](https://code.visualstudio.com/docs/sourcecontrol/overview#_cloning-a-repository)))
 - Open the terminal on project folder and type `npm install`
 - Rename the `config.json.example` file to `config.json`
 - Adjust the config
@@ -41,7 +41,7 @@ A Discord bot to assign roles based on League of Legends Rank!
 - `enableVerification` = Enables summoner name verification
 - `enableTierUpdateMessages` = Enable bot to send messages on configured channel for rank up/down
 
-- To enable rank icons on messages (like this <img alt="Challenger Icon" style="width:18px" src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/challenger.png"/> (You need to add custom emojis on your server ([Tutorial](https://support.discord.com/hc/en-us/articles/360036479811-Custom-Emojis))). The icons are inside the `assets/img` folder (Please do not change the name of the icons or the bot will not be able to identify them)
+- To enable rank icons on messages (like this <img alt="Challenger Icon" style="width:18px" src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/challenger.png"/>) you need to add custom emojis on your server ([Tutorial](https://support.discord.com/hc/en-us/articles/360036479811-Custom-Emojis))). The icons are inside the `assets/img` folder (Please do not change the name of the icons or the bot will not be able to identify them)
 
 ## LICENSE
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br/><br/><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
