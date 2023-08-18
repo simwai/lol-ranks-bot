@@ -1,5 +1,5 @@
 # lol-ranks-bot
-A Discord bot to assign roles based on League of Legends Rank!
+A Discord bot to assign roles based on League of Legends Rank! Updated by me to support the Emerald Rank!
 
 [![CodeQL](https://github.com/simwai/lol-ranks-bot/actions/workflows/codeql.yml/badge.svg)](https://github.com/simwai/lol-ranks-bot/actions/workflows/codeql.yml)
 [![Qodana](https://github.com/simwai/lol-ranks-bot/actions/workflows/qodana.yml/badge.svg)](https://github.com/simwai/lol-ranks-bot/actions/workflows/qodana.yml)
