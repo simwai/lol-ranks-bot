@@ -163,10 +163,11 @@ class LoLRanks {
         Silver: 3,
         Gold: 4,
         Platinum: 5,
-        Diamond: 6,
-        Master: 7,
-        Grandmaster: 8,
-        Challenger: 9
+        Emerald: 6,
+        Diamond: 7,
+        Master: 8,
+        Grandmaster: 9,
+        Challenger: 10
       }
 
       const rankValue = {
