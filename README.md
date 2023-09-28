@@ -1,5 +1,5 @@
 # lol-ranks-bot
-A Discord bot to assign roles based on League of Legends Rank! Updated by me to support the Emerald Rank!
+A Discord bot to assign roles based on League of Legends Rank!
 
 [![VS Code](https://img.shields.io/badge/IDE-VS%20Code-6A0DAD.svg)](https://code.visualstudio.com/)
 [![ESLint](https://img.shields.io/badge/ESLint-%E2%9C%A8%20violet.svg?style=flat&logo=eslint&logoColor=white&color=8A2BE2&labelColor=454545)](https://eslint.org/)
