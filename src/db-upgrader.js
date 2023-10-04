@@ -2,7 +2,7 @@ const fs = require('node:fs/promises')
 const path = require('node:path')
 const db = require('../players.json')
 
-/** Repairs old db files with deprecated db schema */
+// Repairs old db files with deprecated db schema
 class DbUpgrader {
   constructor() {
     this.dbPath = path.join(__dirname, '../players.json')
