@@ -10,7 +10,7 @@
   "enableTierUpdateMessages": false,
   "discordToken": "DISCORD-API-TOKEN",
   "riotToken": "RIOT-API-TOKEN",
-  "status": "@RankBot rank [ign]",
+  "status": "🤖 Ready to give rank roles",
   "ranks": [
     "Unranked",
     "Iron",
