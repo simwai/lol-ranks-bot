@@ -51,15 +51,7 @@ class ApiHandler {
       break
     }
 
-    let summonerData
-
-    try {
-      summonerData = await this.getData(summonerDataUrl)
-    } catch (error) {
-      console.trace('Failed to get summoner data for ', args.value, error)
-    }
-
-    return summonerData
+    return this.getData(summonerDataUrl)
   }
 
   async getRankedDataById(helpChannel, summonerID) {
