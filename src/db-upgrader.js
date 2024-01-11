@@ -14,23 +14,27 @@ class DbUpgrader {
     let didSomething = false
 
     for (const player of dbJson.players) {
-      if (db.players.find(player => player.authenticated)) {
+      if (db.players.find((player) => player.authenticated)) {
         player.auth = player.authenticated
         delete player.authenticated
         didSomething = true
       }
 
-      if (!db.players.find(player => player.authCode?.toString().match(/^\d{1,5}$/g))) {
+      if (
+        !db.players.find((player) =>
+          player.authCode?.toString().match(/^\d{1,5}$/g)
+        )
+      ) {
         player.authCode = null
         didSomething = true
       }
 
-      if (!db.players.find(player => player.tier)) {
+      if (!db.players.find((player) => player.tier)) {
         player.tier = null
         didSomething = true
       }
 
-      if (!db.players.find(player => player.totalValue)) {
+      if (!db.players.find((player) => player.totalValue)) {
         player.totalValue = null
         didSomething = true
       }
@@ -39,8 +43,7 @@ class DbUpgrader {
     const dbString = JSON.stringify(dbJson)
     await fs.writeFile(this.dbPath, dbString)
 
-    if (didSomething)
-      console.log('Upgraded config')
+    if (didSomething) console.log('Upgraded config')
   }
 }
 

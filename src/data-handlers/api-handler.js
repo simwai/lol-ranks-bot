@@ -5,6 +5,7 @@ const i18n = require('i18n')
 class ApiHandler {
   constructor(config) {
     this.config = config
+    this.discordBaseURL = 'https://discord.com/api/v9'
   }
 
   static getInstance(config = null) {
@@ -68,6 +69,56 @@ class ApiHandler {
     }
 
     return rankData
+  }
+
+  async validateGuildId(guildId) {
+    try {
+      const response = await got(`${this.discordBaseURL}/guilds/${guildId}`, {
+        headers: {
+          Authorization: `Bot ${this.config.discordToken}`
+        }
+      })
+
+      if (response.statusCode === 200) {
+        console.log(`Guild ID ${guildId} is valid.`)
+        return true
+      }
+    } catch (error) {
+      throw new Error(
+        `Invalid guild ID: ${guildId}. ${error.response?.body || error.message}`
+      )
+    }
+  }
+
+  async validateChannelId(channelId, guildId) {
+    try {
+      const response = await got(
+        `${this.discordBaseURL}/guilds/${guildId}/channels`,
+        {
+          headers: {
+            Authorization: `Bot ${this.config.discordToken}`
+          }
+        }
+      )
+
+      const channels = JSON.parse(response.body)
+      const channelExists = channels.some((channel) => channel.id === channelId)
+
+      if (!channelExists) {
+        throw new Error(
+          `Channel ID ${channelId} does not exist in guild ${guildId}.`
+        )
+      }
+
+      console.log(`Channel ID ${channelId} is valid.`)
+      return true
+    } catch (error) {
+      throw new Error(
+        `Invalid channel ID: ${channelId}. ${
+          error.response?.body || error.message
+        }`
+      )
+    }
   }
 }
 

@@ -2,7 +2,8 @@
 	"extends": [
 		"standard",
 		"eslint:recommended",
-		"plugin:promise/recommended"
+		"plugin:promise/recommended",
+    "prettier"
 	],
 	"plugins": [
 		"json-format"
@@ -12,7 +13,7 @@
 		"es2022": true
 	},
 	"parserOptions": {
-		"sourceType": "module"
+		"sourceType": "commonjs"
 	},
 	"rules": {
 		"strict": 0,

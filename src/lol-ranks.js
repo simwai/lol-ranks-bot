@@ -83,7 +83,6 @@ class LoLRanks {
     try {
       guild = await this.client.guilds.fetch(this.config.guildId)
     } catch (error) {
-      // TODO Run config validation on startup
       console.trace('False guild id provided in the config', error)
       return
     }
@@ -118,9 +117,9 @@ class LoLRanks {
     )
     const helpChannel = findHelpChannel
       ? '<#' + findHelpChannel.id + '>'
-      : '<@' + serverOwner.id + '>';
+      : '<@' + serverOwner.id + '>'
 
-    ({ auth, reply } = this.lolAuth(
+    ;({ auth, reply } = this.lolAuth(
       auth,
       player,
       summonerData,
@@ -196,29 +195,30 @@ class LoLRanks {
             .find((emoji) => emoji.name === this.config.rankIconNames[tier])
             ?.toString() ?? ''
 
-        // Compare checkValue with player.totalValue
-        if (player.totalValue > checkValue) {
-          return (
-            member.user +
-            i18n.__('levelDown') +
-            tierIcon +
-            '**' +
-            translatedTier +
-            ' ' +
-            (soloQueueRankData?.rank ?? '') +
-            '**!'
-          )
-        } else if (player.totalValue < checkValue) {
-          return (
-            member.user +
-            i18n.__('levelUp') +
-            tierIcon +
-            '**' +
-            translatedTier +
-            ' ' +
-            (soloQueueRankData?.rank ?? '') +
-            '**!'
-          )
+        if (this.config.enableTierUpdateMessages) {
+          if (player.totalValue > checkValue) {
+            return (
+              member.user +
+              i18n.__('levelDown') +
+              tierIcon +
+              '**' +
+              translatedTier +
+              ' ' +
+              (soloQueueRankData?.rank ?? '') +
+              '**!'
+            )
+          } else if (player.totalValue < checkValue) {
+            return (
+              member.user +
+              i18n.__('levelUp') +
+              tierIcon +
+              '**' +
+              translatedTier +
+              ' ' +
+              (soloQueueRankData?.rank ?? '') +
+              '**!'
+            )
+          }
         }
 
         // Updates player tier, rank and totalValue

@@ -4,7 +4,9 @@ class DbHandler {
   }
 
   static getInstance(db = null) {
-    if (!this.instance && db) { this.instance = new DbHandler(db) }
+    if (!this.instance && db) {
+      this.instance = new DbHandler(db)
+    }
 
     return this.instance
   }
@@ -22,14 +24,12 @@ class DbHandler {
   }
 
   updatePlayer(id, args) {
-    this.db.get('players')
-      .find({ discordID: id })
-      .assign(args)
-      .write()
+    this.db.get('players').find({ discordID: id }).assign(args).write()
   }
 
   deletePlayer(id, isSummonerID = true) {
-    this.db.get('players')
+    this.db
+      .get('players')
       .remove(isSummonerID ? { summonerID: id } : { discordID: id })
       .write()
 
@@ -38,9 +38,14 @@ class DbHandler {
 
   initPlayer(discordID, summonerID) {
     if (!this.getPlayerByDiscordId(discordID)) {
-      this.db.get('players')
+      this.db
+        .get('players')
         .push({
-          discordID, summonerID, authCode: null, auth: false, rank: null
+          discordID,
+          summonerID,
+          authCode: null,
+          auth: false,
+          rank: null
         })
         .write()
     }

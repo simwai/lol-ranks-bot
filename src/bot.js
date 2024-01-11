@@ -1,4 +1,3 @@
-// Load dependencies
 const Discord = require('discord.js')
 const low = require('lowdb')
 const Bottleneck = require('bottleneck')
@@ -8,8 +7,9 @@ const path = require('path')
 const config = require('../config.json')
 const { Events } = require('./events')
 const { DbUpgrader } = require('./db-upgrader')
+const ConfigValidator = require('./config-validator')
 
-// Init locales
+// Configure internationalization
 i18n.configure({
   defaultLocale: config.language,
   locales: ['en', 'de', 'pt', 'es', 'ru'],
@@ -17,13 +17,13 @@ i18n.configure({
   register: global
 })
 
-// Init limiter
+// Setup API rate limiter
 const limiter = new Bottleneck({
   maxConcurrent: config.concurrentRequests,
   minTime: config.requestTime
 })
 
-// Init discord.js client
+// Setup Discord client with necessary intents
 const options = {
   intents: [
     Discord.Intents.FLAGS.GUILDS,
@@ -36,18 +36,27 @@ const options = {
 const client = new Discord.Client(options)
 client.login(config.discordToken)
 
-// Init database
+// Initialize local JSON database
 const adapter = new FileSync('players.json')
 const db = low(adapter)
+db.defaults({ players: [] }).write()
 
-db.defaults({ players: [] })
-  .write();
-
-(async () => {
-  // Init config validator
+// Start main routine
+;(async () => {
+  // Upgrade database if necessary
   const dbUpgrader = new DbUpgrader()
   await dbUpgrader.upgrade()
 
-  // Init events and additional modules
+  // Validate configuration
+  try {
+    const validator = new ConfigValidator(config)
+    await validator.validateConfig()
+    console.log('Configuration is valid!')
+  } catch (error) {
+    console.trace('Configuration is invalid!', error)
+    return
+  }
+
+  // Initialize event handlers
   new Events(client, db, limiter, config)
 })()

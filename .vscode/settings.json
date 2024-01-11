@@ -19,6 +19,6 @@
     "editor.wordBasedSuggestions": "off",
   },
   "[javascript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
   }
 }

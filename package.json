@@ -14,27 +14,32 @@
   "scripts": {
     "always-debug": "nodemon -e \"js\" --inspect --trace-warnings ./src/bot.js",
     "debug": "node --inspect --trace-warnings ./src/bot.js",
-    "lint": "eslint --ext .js,.json,.eslintrc,.babelrc --fix .",
+    "lint": "eslint --ext .js,.json,.eslintrc --fix .",
+    "format": "prettier-eslint --write \"src/**/*.js\"",
     "start": "node ./src/bot.js",
     "stop-debug": "taskkill /F /IM node.exe"
   },
   "dependencies": {
     "@discordjs/rest": "^0.4.1",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
     "bottleneck": "^2.19.5",
     "cron": "^2.0.0",
     "discord-api-types": "^0.32.1",
     "discord.js": "^13.0.0",
     "got": "^11.8.6",
     "i18n": "^0.14.2",
-    "lowdb": "^1.0.0"
+    "lowdb": "^1.0.0",
+    "luxon": "^3.4.4"
   },
   "devDependencies": {
     "eslint": "^8.15.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-json-format": "^2.0.1",
     "eslint-plugin-promise": "^6.0.0",
     "nodemon": "^2.0.16",
-    "prettier": "2.6.2"
+    "prettier-eslint-cli": "^8.0.1"
   }
 }
