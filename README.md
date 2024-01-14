@@ -7,8 +7,9 @@ A Discord bot to assign roles based on League of Legends Rank!
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-9370DB.svg?style=flat&labelColor=454545&color=9370DB)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 ## Requirements
-- Node.js > v16.0
 - VS Code
+- Node.js > v16.0 (only if you are installing or deploying without docker-compose.yml file)
+- Docker and Docker Compose (only if you are deploying by docker-compose.yml file)
 
 ## Installation
 
@@ -19,6 +20,15 @@ A Discord bot to assign roles based on League of Legends Rank!
 - Adjust the config
 - Rename the `players.json.example` file to `players.json`
 - Adjust your settings (tutorial below) and run `npm run-script debug`
+
+## Deployment by docker-compose.yml file
+
+- Install Docker and Docker Compose on your machine ([Guide](https://code.visualstudio.com/Docs/languages/markdown))
+- Clone the repo (in VS Code press CTRL + P and type `>git:clone` ([Tutorial](https://code.visualstudio.com/docs/sourcecontrol/overview#_cloning-a-repository)))
+- Rename the `config.json.example` file to `config.json`
+- Adjust the config
+- Run `docker compose up -d` to build the image and start the container in detached mode
+- Run `docker compose down` to stop the container
 
 ## Settings
 
