@@ -80,12 +80,7 @@ class LoLRanks {
     let guild = ''
     let member = ''
 
-    try {
-      guild = await this.client.guilds.fetch(this.config.guildId)
-    } catch (error) {
-      console.trace('False guild id provided in the config', error)
-      return
-    }
+    guild = await this.client.guilds.fetch(this.config.guildId)
 
     try {
       member = await guild.members.fetch(discordID)
