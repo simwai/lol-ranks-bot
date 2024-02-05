@@ -4,6 +4,7 @@ const Bottleneck = require('bottleneck')
 const FileSync = require('lowdb/adapters/FileSync')
 const i18n = require('i18n')
 const path = require('path')
+const fs = require('fs')
 const config = require('../config.json')
 const { Events } = require('./events')
 const { DbUpgrader } = require('./db-upgrader')
@@ -35,6 +36,11 @@ const options = {
 
 const client = new Discord.Client(options)
 client.login(config.discordToken)
+
+// Create empty players.json if it doesn't exist and write {}
+if (!fs.existsSync('./players.json')) {
+  fs.writeFileSync('./players.json', '{}')
+}
 
 // Initialize local JSON database
 const adapter = new FileSync('players.json')

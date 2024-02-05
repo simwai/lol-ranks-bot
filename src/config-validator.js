@@ -22,11 +22,8 @@ class ConfigValidator {
         channels: {
           type: 'object',
           properties: {
-            role: { type: 'string', pattern: '^[0-9]+$' },
-            test: { type: 'string', pattern: '^[0-9]+$' },
             help: { type: 'string', pattern: '^[0-9]+$', nullable: true }
           },
-          required: ['role', 'test'],
           additionalProperties: false
         },
         guildId: { type: 'string', pattern: '^[0-9]+$' },

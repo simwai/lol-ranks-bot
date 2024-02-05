@@ -1,40 +1,70 @@
 # lol-ranks-bot
-A Discord bot to assign roles based on League of Legends Rank!
+A Discord bot that allows users to verify their League of Legends summoner name and assigns roles based on their rank/elo in the game. Users must initiate the verification process themselves, and upon successful verification, the bot will grant them the appropriate rank role within the Discord server.
 
 [![VS Code](https://img.shields.io/badge/IDE-VS%20Code-6A0DAD.svg)](https://code.visualstudio.com/)
 [![ESLint](https://img.shields.io/badge/ESLint-%E2%9C%A8%20violet.svg?style=flat&logo=eslint&logoColor=white&color=8A2BE2&labelColor=454545)](https://eslint.org/)
 [![Prettier](https://img.shields.io/badge/Prettier-%E2%9C%A8%20violet.svg?style=flat&logo=prettier&logoColor=white&color=8A2BE2&labelColor=454545)](https://prettier.io/)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-9370DB.svg?style=flat&labelColor=454545&color=9370DB)](https://creativecommons.org/licenses/by-nc/4.0/)
 
-## Requirements
-- VS Code
-- Node.js > v16.0 (only if you are installing or deploying without docker-compose.yml file)
-- Docker and Docker Compose (only if you are deploying by docker-compose.yml file)
+## Prerequisites
+Before you begin, ensure you have met the following requirements:
+- For local development:
+  - Node.js (v16.0 or higher)
+  - NPM (usually comes with Node.js)
+- For server deployment:
+  - Node.js (v16.0 or higher)
+  - Docker and Docker Compose (for Docker deployment)
+  - PM2 (for PM2 deployment)
 
-## Installation
 
-- Install [NPM](https://nodejs.org/en/download/)
-- Clone the repo (in VS Code press CTRL + P and type `>git:clone` ([Tutorial](https://code.visualstudio.com/docs/sourcecontrol/overview#_cloning-a-repository)))
-- Open the terminal on project folder and type `npm install`
-- Rename the `config.json.example` file to `config.json`
-- Adjust the config
-- Rename the `players.json.example` file to `players.json`
-- Adjust your settings (tutorial below) and run `npm run-script debug`
+## Local Development Setup
+Follow these steps to set up the bot for development purposes on your local machine:
 
-## Deployment by docker-compose.yml file
+1. Install Node.js (v16.0 or higher) and NPM from [Node.js official website](https://nodejs.org/en/download/).
+2. Clone the repository:
+   - Open your terminal.
+   - Navigate to the directory where you want to clone the repository.
+   - Run `git clone https://github.com/your-username/lol-ranks-bot.git`.
+   - Navigate to the cloned directory by running `cd lol-ranks-bot`.
+3. Install dependencies by running `npm install`.
+4. Copy the `config.json.example` file and rename it to `config.json`.
+5. Edit `config.json` with your Discord bot and Riot API credentials.
+6. Start the bot in debug mode by running `npm run-script debug`.
 
-- Install Docker and Docker Compose on your machine ([Guide](https://code.visualstudio.com/Docs/languages/markdown))
-- Clone the repo (in VS Code press CTRL + P and type `>git:clone` ([Tutorial](https://code.visualstudio.com/docs/sourcecontrol/overview#_cloning-a-repository)))
-- Rename the `config.json.example` file to `config.json`
-- Adjust the config
-- Run `docker compose up -d` to build the image and start the container in detached mode
-- Run `docker compose down` to stop the container
+## Server Deployment
+
+### Docker Deployment
+To deploy the bot on a server using Docker, follow these steps:
+
+1. Install Docker and Docker Compose on your server. Follow the [official Docker guide](https://docs.docker.com/get-docker/) for installation instructions.
+2. Clone the repository (see Local Development Setup step 2).
+3. Copy the `config.json.example` file and rename it to `config.json`.
+4. Edit `config.json` with your Discord bot and Riot API credentials.
+5. Run `docker compose up -d` to build the Docker image and start the bot in detached mode.
+6. To stop the bot, run `docker compose down`.
+
+### PM2 Deployment
+To deploy the bot on a server using PM2, follow these steps:
+
+1. Install Node.js (v16.0 or higher) and NPM on your server.
+2. Install PM2 globally by running `npm install pm2 -g`.
+3. Clone the repository (see Local Development Setup step 2).
+4. Install dependencies by running `npm install`.
+5. Copy the `config.json.example` file and rename it to `config.json`.
+6. Edit `config.json` with your Discord bot and Riot API credentials.
+7. Start the bot using PM2 by running `pm2 start index.js --name lol-ranks-bot`.
+8. To ensure PM2 restarts the bot after reboots, run `pm2 startup` and follow the instructions.
+
+## How the Bot Works
+- Users trigger the verification process by a command in Discord.
+- The bot verifies the user's League of Legends summoner name.
+- Once verified, the bot checks the user's rank/elo in League of Legends.
+- The bot assigns a corresponding rank role and verified role to the user in the Discord server based on their League of Legends rank/elo.
+- The bot keeps the lol ranks of the verified users up-to-date by running periodically.
+- The bot does not automatically assign roles to all users; each user must initiate the verification process.
 
 ## Settings
-
 - `channels` = Set the ID of the channels that will be used for the Bot to send the messages
-  - `role` - Default channel for bot messages (required)
-  - `test` - Default channel for setting up/testing the bot (required)
   - `help` - Default channel to help members with bot-related issues (optional)
 - `guildID` = ID of your server ([Tutorial](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-))
 - `discordToken` = Tokens of your bot, used to authorize API requests and carry all of your bot user’s permissions ([Tutorial](https://discord.com/developers/docs/getting-started#configuring-a-bot))
@@ -46,7 +76,7 @@ A Discord bot to assign roles based on League of Legends Rank!
 - `timeZone` = Your timezone, you can find all timezones [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
 - `language` = Select your general language according to the filename inside the `locales` folder (name only, no extension)
 - `eloRoleLanguage` = Select your rank role language
-- `verifiedLanguage` = Select your verified role language
+- `verifiedRoleLanguage` = Select your verified role language
 - `enableCronJob` = Enables automatic update of ranks every `X` time, defined in `cronTab`
 - `cronTab` = Defines how often the ranks will be updated if `enableCronJob` is `true`
 - `concurrentRequests` = Defines the number of concurrent requests to the API (See [Rate Limits](https://developer.riotgames.com/#:~:text=RATE%20LIMITS) after login)
