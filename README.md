@@ -16,7 +16,6 @@ Before you begin, ensure you have met the following requirements:
   - Docker and Docker Compose (for Docker deployment)
   - PM2 (for PM2 deployment)
 
-
 ## Local Development Setup
 Follow these steps to set up the bot for development purposes on your local machine:
 
@@ -24,12 +23,11 @@ Follow these steps to set up the bot for development purposes on your local mach
 2. Clone the repository:
    - Open your terminal.
    - Navigate to the directory where you want to clone the repository.
-   - Run `git clone https://github.com/your-username/lol-ranks-bot.git`.
+   - Run `git clone https://github.com/simwai/lol-ranks-bot.git`.
    - Navigate to the cloned directory by running `cd lol-ranks-bot`.
 3. Install dependencies by running `npm install`.
-4. Copy the `config.json.example` file and rename it to `config.json`.
-5. Edit `config.json` with your Discord bot and Riot API credentials.
-6. Start the bot in debug mode by running `npm run-script debug`.
+4. Adjust the config values by editing `config.json`.
+5. Start the bot by running `npm run-script start`.
 
 ## Server Deployment
 
@@ -38,10 +36,9 @@ To deploy the bot on a server using Docker, follow these steps:
 
 1. Install Docker and Docker Compose on your server. Follow the [official Docker guide](https://docs.docker.com/get-docker/) for installation instructions.
 2. Clone the repository (see Local Development Setup step 2).
-3. Copy the `config.json.example` file and rename it to `config.json`.
-4. Edit `config.json` with your Discord bot and Riot API credentials.
-5. Run `docker compose up -d` to build the Docker image and start the bot in detached mode.
-6. To stop the bot, run `docker compose down`.
+3. Adjust the config values by editing `config.json`.
+4. Run `docker compose up -d` to build the Docker image and start the bot in detached mode.
+5. To stop the bot, run `docker compose down`.
 
 ### PM2 Deployment
 To deploy the bot on a server using PM2, follow these steps:
@@ -50,10 +47,9 @@ To deploy the bot on a server using PM2, follow these steps:
 2. Install PM2 globally by running `npm install pm2 -g`.
 3. Clone the repository (see Local Development Setup step 2).
 4. Install dependencies by running `npm install`.
-5. Copy the `config.json.example` file and rename it to `config.json`.
-6. Edit `config.json` with your Discord bot and Riot API credentials.
-7. Start the bot using PM2 by running `pm2 start index.js --name lol-ranks-bot`.
-8. To ensure PM2 restarts the bot after reboots, run `pm2 startup` and follow the instructions.
+5. Adjust the config values by editing `config.json`.
+6. Start the bot using PM2 by running `pm2 start index.js --name lol-ranks-bot`.
+7. To ensure PM2 restarts the bot after reboots, run `pm2 save`
 
 ## How the Bot Works
 - Users trigger the verification process by a command in Discord.
