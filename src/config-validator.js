@@ -1,12 +1,14 @@
 const Ajv = require('ajv')
 const addFormats = require('ajv-formats')
 const { IANAZone } = require('luxon')
-const { ApiHandler } = require('./data-handlers/api-handler')
+const { ApiHandler } = require('./data-handlers/discord-api-handler')
+const RiotApiValidator = require('./data-handlers/riot-api-validator')
 
 class ConfigValidator {
   constructor(config) {
     this.config = config
     this.apiHandler = ApiHandler.getInstance(config)
+    this.riotApiValidator = new RiotApiValidator(config);
 
     const ajv = new Ajv({ allErrors: true, useDefaults: true })
     addFormats(ajv)
@@ -55,7 +57,6 @@ class ConfigValidator {
         requestTime: { type: 'integer', minimum: 1 }
       },
       required: [
-        'channels',
         'guildId',
         'setVerifiedRole',
         'enableVerification',
@@ -87,9 +88,14 @@ class ConfigValidator {
     await this.apiHandler.validateGuildId(config.guildId)
 
     // Validate the channel IDs
-    for (const channelId of Object.values(config.channels)) {
-      await this.apiHandler.validateChannelId(channelId, config.guildId)
-    }
+    if (config.channels)
+      for (const channelId of Object.values(config.channels)) {
+        await this.apiHandler.validateChannelId(channelId, config.guildId)
+      }
+  }
+
+  async validateApiKey() {
+     await this.riotApiValidator.validateRiotToken();
   }
 
   async validateConfig() {
@@ -105,6 +111,8 @@ class ConfigValidator {
 
     // Perform actual validation against the Discord API
     await this.validateDiscordResources(this.config)
+    // Validate Riot API key
+    await this.validateApiKey();
   }
 }
 

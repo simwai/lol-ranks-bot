@@ -4,7 +4,7 @@ const { SlashCommands } = require('./slash-commands')
 const { LoLRanks } = require('./lol-ranks')
 const { Roles } = require('./roles')
 const { DbHandler } = require('./data-handlers/db-handler')
-const { ApiHandler } = require('./data-handlers/api-handler')
+const { ApiHandler } = require('./data-handlers/discord-api-handler')
 
 class Events {
   constructor(client, db, limiter, config) {
@@ -91,12 +91,16 @@ class Events {
     this.limiter
       .schedule(async () => {
         const reply = await this.lolRanks.setRoleByRank(message, args)
+
+        if (!reply) return { reply: null }
+
         const data =
           reply === i18n.__('reply8') ||
           reply.includes(i18n.__('reply4_1')) ||
           reply.includes(i18n.__('reply5_1'))
             ? { reply, isButton: false }
             : { reply, isButton: true }
+
         return data
       })
       .then(({ reply, isButton }) => {

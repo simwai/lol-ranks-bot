@@ -1,7 +1,7 @@
 const { CronJob } = require('cron')
 const i18n = require('i18n')
 const { DbHandler } = require('./data-handlers/db-handler')
-const { ApiHandler } = require('./data-handlers/api-handler')
+const { ApiHandler } = require('./data-handlers/discord-api-handler')
 
 class LoLRanks {
   constructor(client, config, db, limiter, roles) {
@@ -49,14 +49,18 @@ class LoLRanks {
 
   async setRoleByRank(message, args) {
     console.log('Set role by rank for ', args)
-    const channels = Object.values(this.config.channels)
-
-    if (
-      (message &&
-        !channels.some((channelID) => message.channel.id === channelID)) ||
-      !args
-    ) {
-      return
+    
+    if (this.config.channels) {
+      const channels = Object.values(this.config.channels)
+  
+      if (
+        (message &&
+          !channels.some((channelID) => message.channel.id === channelID)) ||
+        !args
+      ) {
+        console.log('Command was triggered in wrong channel')
+        return
+      }
     }
 
     let summonerData
