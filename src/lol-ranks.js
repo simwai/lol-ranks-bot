@@ -49,10 +49,10 @@ class LoLRanks {
 
   async setRoleByRank(message, args) {
     console.log('Set role by rank for ', args)
-    
+
     if (this.config.channels) {
       const channels = Object.values(this.config.channels)
-  
+
       if (
         (message &&
           !channels.some((channelID) => message.channel.id === channelID)) ||

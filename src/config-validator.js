@@ -8,7 +8,7 @@ class ConfigValidator {
   constructor(config) {
     this.config = config
     this.apiHandler = ApiHandler.getInstance(config)
-    this.riotApiValidator = new RiotApiValidator(config);
+    this.riotApiValidator = new RiotApiValidator(config)
 
     const ajv = new Ajv({ allErrors: true, useDefaults: true })
     addFormats(ajv)
@@ -95,7 +95,7 @@ class ConfigValidator {
   }
 
   async validateApiKey() {
-     await this.riotApiValidator.validateRiotToken();
+    await this.riotApiValidator.validateRiotToken()
   }
 
   async validateConfig() {
@@ -112,7 +112,7 @@ class ConfigValidator {
     // Perform actual validation against the Discord API
     await this.validateDiscordResources(this.config)
     // Validate Riot API key
-    await this.validateApiKey();
+    await this.validateApiKey()
   }
 }
 
