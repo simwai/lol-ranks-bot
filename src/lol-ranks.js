@@ -112,7 +112,7 @@ class LoLRanks {
     }
 
     const findHelpChannel = guild.channels.cache.find(
-      (c) => c.id === this.config.channels.help
+      (c) => c.id === this.config.channels?.help
     )
     const helpChannel = findHelpChannel
       ? '<#' + findHelpChannel.id + '>'
