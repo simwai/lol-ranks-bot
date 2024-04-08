@@ -120,6 +120,29 @@ class ApiHandler {
       )
     }
   }
+
+  async validateRiotToken() {
+    try {
+      const response = await got(
+        `https://${this.config.region}.api.riotgames.com/lol/status/v3/shard-data`,
+        {
+          headers: {
+            'X-Riot-Token': this.config.riotToken
+          }
+        }
+      )
+
+      if (response.statusCode === 200) {
+        console.log('Riot token is valid.')
+        return true
+      }
+    } catch (error) {
+      if (error.response?.statusCode === 401) {
+        throw new Error('Invalid Riot token.')
+      }
+      throw error
+    }
+  }
 }
 
 module.exports = {

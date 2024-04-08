@@ -4,7 +4,7 @@ const { SlashCommands } = require('./slash-commands')
 const { LoLRanks } = require('./lol-ranks')
 const { Roles } = require('./roles')
 const { DbHandler } = require('./data-handlers/db-handler')
-const { ApiHandler } = require('./data-handlers/discord-api-handler')
+const { ApiHandler } = require('./data-handlers/api-handler')
 
 class Events {
   constructor(client, db, limiter, config) {

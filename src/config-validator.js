@@ -1,14 +1,12 @@
 const Ajv = require('ajv')
 const addFormats = require('ajv-formats')
 const { IANAZone } = require('luxon')
-const { ApiHandler } = require('./data-handlers/discord-api-handler')
-const RiotApiValidator = require('./data-handlers/riot-api-validator')
+const { ApiHandler } = require('./data-handlers/api-handler')
 
 class ConfigValidator {
   constructor(config) {
     this.config = config
     this.apiHandler = ApiHandler.getInstance(config)
-    this.riotApiValidator = new RiotApiValidator(config)
 
     const ajv = new Ajv({ allErrors: true, useDefaults: true })
     addFormats(ajv)
@@ -94,10 +92,6 @@ class ConfigValidator {
       }
   }
 
-  async validateApiKey() {
-    await this.riotApiValidator.validateRiotToken()
-  }
-
   async validateConfig() {
     const valid = this.validate(this.config)
     if (!valid) {
@@ -112,7 +106,7 @@ class ConfigValidator {
     // Perform actual validation against the Discord API
     await this.validateDiscordResources(this.config)
     // Validate Riot API key
-    await this.validateApiKey()
+    await this.apiHandler.validateRiotToken()
   }
 }
 

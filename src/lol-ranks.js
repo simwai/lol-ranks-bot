@@ -1,7 +1,7 @@
 const { CronJob } = require('cron')
 const i18n = require('i18n')
 const { DbHandler } = require('./data-handlers/db-handler')
-const { ApiHandler } = require('./data-handlers/discord-api-handler')
+const { ApiHandler } = require('./data-handlers/api-handler')
 
 class LoLRanks {
   constructor(client, config, db, limiter, roles) {
