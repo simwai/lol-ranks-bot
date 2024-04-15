@@ -12,11 +12,12 @@
   "author": "AlthalusAvan feat. simwai",
   "main": "bot.js",
   "scripts": {
-    "always-debug": "nodemon -e \"js\" --inspect --trace-warnings ./src/bot.js",
+    "always-debug": "nodemon -e \"js\" -i ./tests --inspect --trace-warnings ./src/bot.js",
     "debug": "node --inspect --trace-warnings ./src/bot.js",
     "lint": "eslint --ext .js,.json,.eslintrc --fix .",
     "format": "prettier-eslint --write \"src/**/*.js\"",
     "start": "node ./src/bot.js",
+    "test": "npx ava",
     "stop-debug": "taskkill /F /IM node.exe"
   },
   "dependencies": {
@@ -34,13 +35,16 @@
     "luxon": "^3.4.4"
   },
   "devDependencies": {
+    "ava": "^6.1.2",
     "eslint": "^8.15.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-json-format": "^2.0.1",
     "eslint-plugin-promise": "^6.0.0",
+    "nock": "^13.5.4",
     "nodemon": "^2.0.16",
-    "prettier-eslint-cli": "^8.0.1"
+    "prettier-eslint-cli": "^8.0.1",
+    "sinon": "^17.0.1"
   }
 }

@@ -31,7 +31,11 @@ class ApiHandler {
 
       return response
     } catch (error) {
-      throw new Error(error + ' ' + error.response.statusCode)
+      if (error.response && error.response.statusCode) {
+        throw new Error(error.message + ' ' + error.response.statusCode)
+      } else {
+        throw new Error('Network error')
+      }
     }
   }
 
@@ -45,6 +49,8 @@ class ApiHandler {
     case 'summonerID':
       summonerDataUrl += args.value
       break
+    case 'accountID':
+      summonerDataUrl += 'by-account/' + args.value
     case 'player':
       summonerDataUrl += args.value.summonerID
       break
