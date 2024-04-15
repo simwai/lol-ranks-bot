@@ -60,8 +60,8 @@ To deploy the bot on a server using PM2, follow these steps:
 - The bot does not automatically assign roles to all users; each user must initiate the verification process.
 
 ## Settings
-- `channels` = Set the ID of the channels that will be used for the Bot to send the messages
-  - `help` - Default channel to help members with bot-related issues (optional)
+- `channels` = Set the ID of the channels that will be used for the Bot to send the messages (optional)
+  - `help` - Default channel to help members with bot-related issues
 - `guildID` = ID of your server ([Tutorial](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-))
 - `discordToken` = Tokens of your bot, used to authorize API requests and carry all of your bot user’s permissions ([Tutorial](https://discord.com/developers/docs/getting-started#configuring-a-bot))
 - `riotToken` = Riot development API key ([Tutorial](https://developer.riotgames.com/docs/lol#:~:text=Before%20you%20start%20reading%20this%20documentation%20you%20need%20to%20first%20login%20with%20your%20Riot%20Games%20account.%20Once%20you%20do,%20a%20Developer%20Portal%20account%20is%20created%20for%20you!%20This%20action%20also%20generates%20a%20basic%20development%20API%20key%20that%20is%20associated%20with%20your%20account.))
