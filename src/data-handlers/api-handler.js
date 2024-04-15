@@ -124,7 +124,7 @@ class ApiHandler {
   async validateRiotToken() {
     try {
       const response = await got(
-        `https://${this.config.region}.api.riotgames.com/lol/status/v3/shard-data`,
+        `https://${this.config.region}.api.riotgames.com/lol/platform/v3/champion-rotations`,
         {
           headers: {
             'X-Riot-Token': this.config.riotToken
