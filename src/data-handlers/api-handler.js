@@ -49,8 +49,6 @@ class ApiHandler {
     case 'summonerID':
       summonerDataUrl += args.value
       break
-    case 'accountID':
-      summonerDataUrl += 'by-account/' + args.value
     case 'player':
       summonerDataUrl += args.value.summonerID
       break
