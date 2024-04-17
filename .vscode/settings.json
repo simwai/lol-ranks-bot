@@ -13,12 +13,14 @@
     "editor.suggestOnTriggerCharacters": false,
     "editor.wordBasedSuggestions": "off",
   },
-  "editor.tabSize": 2,
-  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
-  "editor.formatOnType": false,
-  "editor.formatOnPaste": true,
-  "editor.formatOnSave": true, 
-  "editor.formatOnSaveMode": "file",
-  "files.autoSave": "onFocusChange",
-  "vs-code-prettier-eslint.prettierLast": false // set as "true" to run 'prettier' last not first
+  "[javascript]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+    "editor.formatOnType": false,
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "files.autoSave": "onFocusChange",
+  },
+  "vs-code-prettier-eslint.prettierLast": false
 }
