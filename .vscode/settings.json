@@ -1,9 +1,4 @@
 {
-  "editor.tabSize": 2,
-  "editor.formatOnSave": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
   "[json]": {
     "editor.acceptSuggestionOnCommitCharacter": false,
     "editor.acceptSuggestionOnEnter": "off",
@@ -18,7 +13,12 @@
     "editor.suggestOnTriggerCharacters": false,
     "editor.wordBasedSuggestions": "off",
   },
-  "[javascript]": {
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
-  }
+  "editor.tabSize": 2,
+  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+  "editor.formatOnType": false,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true, 
+  "editor.formatOnSaveMode": "file",
+  "files.autoSave": "onFocusChange",
+  "vs-code-prettier-eslint.prettierLast": false // set as "true" to run 'prettier' last not first
 }
