@@ -1,6 +1,5 @@
 const { REST } = require('@discordjs/rest')
 const { Routes } = require('discord-api-types/v9')
-const i18n = require('i18n')
 
 class SlashCommands {
   constructor(config, clientId, commands) {
