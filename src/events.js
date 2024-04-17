@@ -70,9 +70,10 @@ class Events {
         }
 
         this.executeCommand('rank', interaction, args)
-      }
-
-      else if (interaction.isCommand() && interaction.commandName === 'rank') {
+      } else if (
+        interaction.isCommand() &&
+        interaction.commandName === 'rank'
+      ) {
         const args = {
           type: 'summonerName',
           value: interaction.options.data[0].value.trim()
@@ -93,7 +94,12 @@ class Events {
     for (const file of commandFiles) {
       const Command = require(path.join(commandsPath, file))
       if (Command) {
-        const commandInstance = new Command(this.lolRanks, this.config, this.limiter, i18n)
+        const commandInstance = new Command(
+          this.lolRanks,
+          this.config,
+          this.limiter,
+          i18n
+        )
         if (commandInstance.name) {
           this.commands.set(commandInstance.name, commandInstance)
         }
