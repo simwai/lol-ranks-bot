@@ -36,13 +36,15 @@ class LoLRanks {
     console.log('Checking ranks')
     const players = this.db.get('players').value()
 
-    for (const player of players) {
-      try {
-        await this.limiter.schedule(() =>
-          this.setRoleByRank(null, { value: player, type: 'player' })
-        )
-      } catch (error) {
-        console.trace('Error checking ranks', error)
+    if (players?.length > 0) {
+      for (const player of players) {
+        try {
+          await this.limiter.schedule(() =>
+            this.setRoleByRank(null, { value: player, type: 'player' })
+          )
+        } catch (error) {
+          console.trace('Error checking ranks', error)
+        }
       }
     }
   }
@@ -185,7 +187,10 @@ class LoLRanks {
             : tierValue[tier] + rankValue[rank]
 
         // Translate the tier value
-        const tierLocale = i18n.__({ phrase: 'ranks', locale: 'en' })
+        const tierLocale = i18n.__({
+          phrase: 'ranks',
+          locale: this.config.eloRoleLanguage
+        })
         const translatedTier = tierLocale[tier]
 
         const role = guild.roles.cache.find((r) => r.name === translatedTier)

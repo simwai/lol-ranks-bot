@@ -1,5 +1,6 @@
+const fs = require('fs')
+const path = require('path')
 const i18n = require('i18n')
-const { MessageActionRow, MessageButton } = require('discord.js')
 const { SlashCommands } = require('./slash-commands')
 const { LoLRanks } = require('./lol-ranks')
 const { Roles } = require('./roles')
@@ -14,17 +15,17 @@ class Events {
     this.client = client
     this.apiHandler = ApiHandler.getInstance(this.config)
     this.dbHandler = DbHandler.getInstance(this.db)
+    this.commands = new Map()
 
     this.init()
   }
 
-  init() {
+  async init() {
     this.client.once('ready', async () => {
       console.log('Ready!')
-
       this.client.user.setActivity(this.config.status, { type: 'PLAYING' })
 
-      // Init modules
+      // Initialize roles and lolRanks before loading commands
       const roles = new Roles(this.client, this.config)
       await roles.init()
       this.lolRanks = new LoLRanks(
@@ -34,97 +35,84 @@ class Events {
         this.limiter,
         roles
       )
+
+      // Load commands after dependencies are initialized
+      this.loadCommands()
+
       const slashCommands = new SlashCommands(
         this.config,
-        this.client.application.id
+        this.client.application.id,
+        this.commands
       )
       await slashCommands.init()
     })
 
+    // Handling command interaction
     this.client.on('interactionCreate', async (interaction) => {
       if (
         interaction.isButton() &&
         interaction.component.label === i18n.__('confirm')
       ) {
         const player = this.dbHandler.getPlayerByDiscordId(interaction.user.id)
-        const summonerData = await this.apiHandler.getSummonerDataByNameOrId({
+        if (!player) {
+          console.error('Player not found.')
+          return
+        }
+
+        if (!player?.summonerID) {
+          console.error('Player not found.')
+          return
+        }
+
+        const args = {
           value: player.summonerID,
           type: 'summonerID'
-        })
-        const summonerName = summonerData.name
-        this.executeCommand(
-          'rank',
-          summonerName,
-          interaction,
-          i18n.__('confirm')
-        )
+        }
+
+        this.executeCommand('rank', interaction, args)
       }
 
-      if (interaction.isCommand() && interaction.commandName === 'rank') {
-        this.executeCommand(
-          'rank',
-          interaction.options.data[0].value,
-          interaction,
-          i18n.__('confirm')
-        )
+      else if (interaction.isCommand() && interaction.commandName === 'rank') {
+        const args = {
+          type: 'summonerName',
+          value: interaction.options.data[0].value.trim()
+        }
+        this.executeCommand('rank', interaction, args)
       }
     })
   }
 
-  executeCommand(name, args, message, buttonText = null) {
-    switch (name) {
-    case 'rank':
-      this.rankCommand(
-        { value: args, type: 'summonerName' },
-        message,
-        buttonText
+  loadCommands() {
+    const commandsPath = path.join(__dirname, 'commands')
+    const commandFiles = fs
+      .readdirSync(commandsPath)
+      .filter(
+        (file) => file.endsWith('.js') && !file.includes('command-interface')
       )
-      break
-    default:
-      break
+
+    for (const file of commandFiles) {
+      const Command = require(path.join(commandsPath, file))
+      if (Command) {
+        const commandInstance = new Command(this.lolRanks, this.config, this.limiter, i18n)
+        if (commandInstance.name) {
+          this.commands.set(commandInstance.name, commandInstance)
+        }
+      }
     }
   }
 
-  rankCommand(args, message, buttonText) {
-    if (Array.isArray(args)) args.shift()
+  async executeCommand(name, message, args) {
+    const command = this.commands.get(name)
+    if (!command) {
+      console.error(`No command found for name: ${name}`)
+      return
+    }
 
-    this.limiter
-      .schedule(async () => {
-        const reply = await this.lolRanks.setRoleByRank(message, args)
-
-        if (!reply) return { reply: null }
-
-        const data =
-          reply === i18n.__('reply8') ||
-          reply.includes(i18n.__('reply4_1')) ||
-          reply.includes(i18n.__('reply5_1'))
-            ? { reply, isButton: false }
-            : { reply, isButton: true }
-
-        return data
-      })
-      .then(({ reply, isButton }) => {
-        if (!reply) return
-
-        const row = new MessageActionRow()
-        row.addComponents(
-          new MessageButton()
-            .setCustomId('primary')
-            .setLabel(buttonText ?? '')
-            .setStyle('PRIMARY')
-        )
-
-        try {
-          message.reply(
-            isButton && buttonText
-              ? { content: reply, components: [row] }
-              : reply
-          )
-        } catch (error) {
-          console.trace('Failed to reply in rank command', error)
-        }
-      })
-      .catch((warning) => console.warn(warning))
+    try {
+      await command.execute(message, args)
+    } catch (error) {
+      console.error(`Error executing command ${name}:`, error)
+    }
   }
 }
 
