@@ -1,4 +1,17 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# Store the original commit message
+COMMIT_MSG_FILE=$(git rev-parse --git-path COMMIT_EDITMSG)
+COMMIT_MSG=$(cat $COMMIT_MSG_FILE)
+
+# Format JavaScript code
 npm run-script format
+
+# Stage any changes made by formatting
+if ! git diff --quiet; then
+  git add -u
+
+  # Reapply the original commit message to the new staged changes
+  echo "$COMMIT_MSG" > "$COMMIT_MSG_FILE"
+fi
