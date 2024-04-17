@@ -20,6 +20,9 @@
     "test": "npx ava",
     "stop-debug": "taskkill /F /IM node.exe"
   },
+  "engines": {
+    "node": ">=16.13.0"
+  },
   "dependencies": {
     "@discordjs/rest": "^0.4.1",
     "ajv": "^8.12.0",
