@@ -1,14 +1,17 @@
-const Discord = require('discord.js')
-const low = require('lowdb')
-const Bottleneck = require('bottleneck')
-const FileSync = require('lowdb/adapters/FileSync')
-const i18n = require('i18n')
-const path = require('path')
-const fs = require('fs')
-const config = require('../config.json')
-const { Events } = require('./events')
-const { DbUpgrader } = require('./db-upgrader')
-const ConfigValidator = require('./config-validator')
+import Discord, { Client } from 'discord.js'
+import low from 'lowdb'
+import Bottleneck from 'bottleneck'
+import FileSync from 'lowdb/adapters/FileSync.js'
+import i18n from 'i18n'
+import path from 'node:path'
+import fs from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import config from '../config.json'
+import { Events } from './events.js'
+import { DbUpgrader } from './db-upgrader.js'
+import ConfigValidator from './config-validator.js'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Configure internationalization
 i18n.configure({
@@ -25,7 +28,7 @@ const limiter = new Bottleneck({
 })
 
 // Setup Discord client with necessary intents
-const options = {
+const options: Discord.ClientOptions = {
   intents: [
     Discord.Intents.FLAGS.GUILDS,
     Discord.Intents.FLAGS.GUILD_MESSAGES,
@@ -34,7 +37,7 @@ const options = {
   ]
 }
 
-const client = new Discord.Client(options)
+const client: Client = new Discord.Client(options)
 client.login(config.discordToken)
 
 // Create empty players.json if it doesn't exist and write {}
@@ -47,8 +50,7 @@ const adapter = new FileSync('players.json')
 const db = low(adapter)
 db.defaults({ players: [] }).write()
 
-// Start main routine
-;(async () => {
+async function main() {
   // Upgrade database if necessary
   const dbUpgrader = new DbUpgrader()
   await dbUpgrader.upgrade()
@@ -64,5 +66,8 @@ db.defaults({ players: [] }).write()
   }
 
   // Initialize event handlers
-  new Events(client, db, limiter, config)
-})()
+  new Events(client, db, limiter, i18n, config)
+}
+
+// Start main routine
+await main()

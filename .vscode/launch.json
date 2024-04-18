@@ -5,24 +5,24 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "request": "launch",
       "name": "Launch Program",
+      "request": "launch",
       "type": "node",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "program": "${workspaceFolder}\\src\\bot.js",
+      "program": "${workspaceFolder}\\src\\bot.ts",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "runtimeArgs": [
         "--inspect",
         "--trace-warnings"
-      ],
+      ]
     },
     {
-      "type": "node",
-      "request": "attach",
       "name": "Attach Debugger to Node",
+      "request": "attach",
+      "type": "node",
       "processId": "${command:PickProcess}",
       "restart": true,
       "skipFiles": [
@@ -30,22 +30,29 @@
       ]
     },
     {
-      "name": "Launch Program (nodemon)",
+      "name": "tsx",
       "type": "node",
       "request": "launch",
-      "runtimeExecutable": "nodemon",
-      "program": "${workspaceFolder}\\src\\bot.js",
-      "runtimeArgs": [
-        "-e",
-        "js",
-        "--inspect",
-        "--trace-warnings"
-      ],
+      // Debug current file in VSCode
+      "program": "${file}",
+      /*
+      Path to tsx binary
+      Assuming locally installed
+      */
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/tsx",
+      /*
+      Open terminal when debugging starts (Optional)
+      Useful to see console.logs
+      */
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
+      // Files to exclude from debugger (e.g. call stack)
       "skipFiles": [
-        "<node_internals>/**"
-      ]
+        // Node.js internal core modules
+        "<node_internals>/**",
+        // Ignore all dependencies (optional)
+        "${workspaceFolder}/node_modules/**",
+      ],
     }
   ]
 }

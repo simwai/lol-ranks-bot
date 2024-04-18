@@ -1,14 +1,31 @@
-const { REST } = require('@discordjs/rest')
-const { Routes } = require('discord-api-types/v9')
+import { REST } from '@discordjs/rest'
+import { Routes } from 'discord-api-types/v9'
+
+interface Config {
+  discordToken: string
+  guildId: string
+}
+
+interface Command {
+  getSlashCommandData: () => object
+}
 
 class SlashCommands {
-  constructor(config, clientId, commands) {
+  private config: Config
+  private clientId: string
+  private commands: Map<string, Command>
+
+  constructor(
+    config: Config,
+    clientId: string,
+    commands: Map<string, Command>
+  ) {
     this.config = config
     this.clientId = clientId
     this.commands = commands
   }
 
-  async init() {
+  async init(): Promise<void> {
     const rest = new REST({ version: '9' }).setToken(this.config.discordToken)
 
     for (const commandInstance of this.commands) {
@@ -25,6 +42,4 @@ class SlashCommands {
   }
 }
 
-module.exports = {
-  SlashCommands
-}
+export { SlashCommands }

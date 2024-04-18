@@ -1,15 +1,20 @@
-const fs = require('node:fs/promises')
-const path = require('node:path')
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Repairs old db files with deprecated db schema
 class DbUpgrader {
+  private dbPath: string
+
   constructor() {
     this.dbPath = path.join(__dirname, '../players.json')
   }
 
-  async upgrade() {
+  async upgrade(): Promise<void> {
     const dbRaw = await fs.readFile(this.dbPath)
-    const dbJson = JSON.parse(dbRaw)
+    const dbJson = JSON.parse(dbRaw.toString())
     let didSomething = false
 
     for (const player of dbJson.players) {
@@ -42,6 +47,4 @@ class DbUpgrader {
   }
 }
 
-module.exports = {
-  DbUpgrader
-}
+export { DbUpgrader }

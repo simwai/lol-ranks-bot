@@ -1,8 +1,34 @@
-const CommandInterface = require('./command-interface')
-const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js')
+import Bottleneck from 'bottleneck'
+import { I18n } from 'i18n'
+import {
+  ButtonInteraction,
+  ColorResolvable,
+  CommandInteraction,
+  MessageActionRow,
+  MessageButton,
+  MessageEmbed
+} from 'discord.js'
+import { Config } from '../interfaces/config.interface.js'
+import { CommandInterface } from '../interfaces/command.interface.js'
+import { LoLRanks } from '../lol-ranks.js'
+import { SummonerDataArgs } from '../types/summoner-data.type.js'
 
-class RankCommand extends CommandInterface {
-  constructor(config, lolRanks, limiter, i18n) {
+// Must be default export!!!
+export default class RankCommand<
+  T extends CommandInteraction | ButtonInteraction
+> extends CommandInterface<T> {
+  i18n: I18n
+  config: Config
+  lolRanks: LoLRanks
+  limiter: Bottleneck
+  buttonText: string
+
+  constructor(
+    config: Config,
+    lolRanks: LoLRanks,
+    limiter: Bottleneck,
+    i18n: I18n
+  ) {
     super('rank')
     this.config = config
     this.lolRanks = lolRanks
@@ -11,7 +37,10 @@ class RankCommand extends CommandInterface {
     this.buttonText = this.i18n.__('confirm')
   }
 
-  async execute(message, args) {
+  async execute(
+    message: CommandInteraction | ButtonInteraction,
+    args: SummonerDataArgs
+  ) {
     this.limiter
       .schedule(async () => {
         const reply = await this.lolRanks.setRoleByRank(message, {
@@ -21,7 +50,9 @@ class RankCommand extends CommandInterface {
 
         if (!reply) return { reply: null }
 
-        const embed = new MessageEmbed().setColor(this.config.embedColor)
+        const embed = new MessageEmbed().setColor(
+          this.config.embedColor as ColorResolvable
+        )
         embed.setDescription(reply)
 
         return {
@@ -32,7 +63,7 @@ class RankCommand extends CommandInterface {
             !reply.includes(this.i18n.__('reply5_1'))
         }
       })
-      .then(({ embed, isButton }) => {
+      .then(({ embed, isButton }): void => {
         if (!embed) return
 
         const row = new MessageActionRow()
@@ -55,7 +86,7 @@ class RankCommand extends CommandInterface {
           console.trace('Failed to reply in rank command', error)
         }
       })
-      .catch((warning) => console.warn(warning))
+      .catch((warning: Error) => console.warn(warning))
   }
 
   getSlashCommandData() {
@@ -74,5 +105,3 @@ class RankCommand extends CommandInterface {
     }
   }
 }
-
-module.exports = RankCommand

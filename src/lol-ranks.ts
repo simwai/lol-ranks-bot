@@ -1,15 +1,48 @@
-const { CronJob } = require('cron')
-const i18n = require('i18n')
-const { DbHandler } = require('./data-handlers/db-handler')
-const { ApiHandler } = require('./data-handlers/api-handler')
+import Bottleneck from 'bottleneck'
+import {
+  ButtonInteraction,
+  Client,
+  CommandInteraction,
+  Guild,
+  GuildMember,
+  Role
+} from 'discord.js'
+import { I18n } from 'i18n'
+import lowdb from 'lowdb'
+import cron from 'cron'
+import { Rank } from './types/rank.type.js'
+import { Tier } from './types/tier.type.js'
+import { Config } from './interfaces/config.interface.js'
+import { DbHandler } from './data-handlers/db-handler.js'
+import { ApiHandler } from './data-handlers/api-handler.js'
+import { SummonerDataArgs } from './types/summoner-data.type.js'
 
-class LoLRanks {
-  constructor(client, config, db, limiter, roles) {
+export class LoLRanks {
+  client: Client
+  config: Config
+  db: lowdb.LowdbSync<any>
+  limiter: Bottleneck
+  i18n: I18n
+  roles: any
+
+  dbHandler: DbHandler
+  apiHandler: ApiHandler
+
+  constructor(
+    client: Client,
+    config: Config,
+    db: lowdb.LowdbSync<any>,
+    limiter: Bottleneck,
+    i18n: I18n,
+    roles: any
+  ) {
     this.client = client
     this.config = config
     this.db = db
     this.limiter = limiter
+    this.i18n = i18n
     this.roles = roles
+
     this.dbHandler = DbHandler.getInstance(this.db)
     this.apiHandler = ApiHandler.getInstance(this.config)
 
@@ -18,7 +51,7 @@ class LoLRanks {
 
   startCronJob() {
     if (this.config.enableCronJob) {
-      new CronJob(
+      new cron.CronJob(
         this.config.cronTab,
         async () => {
           await this.checkRanks()
@@ -33,7 +66,7 @@ class LoLRanks {
   }
 
   async checkRanks() {
-    console.log('Checking ranks')
+    console.log('Checking ranks...')
     const players = this.db.get('players').value()
 
     if (players?.length > 0) {
@@ -49,7 +82,10 @@ class LoLRanks {
     }
   }
 
-  async setRoleByRank(message, args) {
+  public async setRoleByRank(
+    message: CommandInteraction | ButtonInteraction | null,
+    args: SummonerDataArgs
+  ) {
     console.log('Set role by rank for ', args)
 
     if (this.config.channels) {
@@ -57,7 +93,8 @@ class LoLRanks {
 
       if (
         (message &&
-          !channels.some((channelID) => message.channel.id === channelID)) ||
+          message.channel &&
+          !channels.some((channelID) => message!.channel!.id === channelID)) ||
         !args
       ) {
         console.log('Command was triggered in wrong channel')
@@ -71,23 +108,26 @@ class LoLRanks {
       summonerData = await this.apiHandler.getSummonerDataByNameOrId(args)
     } catch (error) {
       console.trace('Failed to get summoner data for ', args, error)
-      return i18n.__('reply8')
+      return this.i18n.__('reply8')
     }
 
     const summonerID = summonerData.id
 
     const discordID =
-      message?.author?.id ??
       message?.user.id ??
       this.dbHandler.getPlayerBySummonerId(summonerID).discordID
 
     this.dbHandler.initPlayer(discordID, summonerID)
 
-    let guild = ''
-    let member = ''
+    let guild: Guild
+    try {
+      guild = await this.client.guilds.fetch(this.config.guildId)
+    } catch (error) {
+      console.log('Failed to fetch guild!')
+      return
+    }
 
-    guild = await this.client.guilds.fetch(this.config.guildId)
-
+    let member: GuildMember
     try {
       member = await guild.members.fetch(discordID)
     } catch (error) {
@@ -96,7 +136,13 @@ class LoLRanks {
       return
     }
 
-    const serverOwner = await guild.fetchOwner()
+    let serverOwner: GuildMember
+    try {
+      serverOwner = await guild.fetchOwner()
+    } catch (error) {
+      console.log('Failed to fetch server owner!')
+      return
+    }
 
     let player = this.dbHandler.getPlayerByDiscordId(discordID)
 
@@ -104,7 +150,7 @@ class LoLRanks {
     let auth = this.config.enableVerification ? player.auth : false
 
     if (summonerID !== player.summonerID) {
-      reply += i18n.__('reply1') + '\n\n'
+      reply += this.i18n.__('reply1') + '\n\n'
 
       auth = false
       this.dbHandler.updatePlayer(discordID, { auth: false, summonerID })
@@ -114,11 +160,11 @@ class LoLRanks {
     }
 
     const findHelpChannel = guild.channels.cache.find(
-      (c) => c.id === this.config.channels?.help
+      (c: { id: any }) => c.id === this.config.channels?.help
     )
     const helpChannel = findHelpChannel
       ? '<#' + findHelpChannel.id + '>'
-      : '<@' + serverOwner.id + '>'
+      : '<@' + serverOwner!.id + '>'
 
     ;({ auth, reply } = this.lolAuth(
       auth,
@@ -141,8 +187,8 @@ class LoLRanks {
       )
 
       let soloQueueRankData = null
-      let tier = ''
-      let rank = ''
+      let tier: Tier | undefined
+      let rank: Rank | undefined
 
       if (rankData.length === 0) {
         tier = 'Unranked'
@@ -159,7 +205,7 @@ class LoLRanks {
         }
       }
 
-      const tierValue = {
+      const tierValue: { [K in Tier]: number } = {
         Unranked: 0,
         Iron: 1,
         Bronze: 2,
@@ -173,7 +219,7 @@ class LoLRanks {
         Challenger: 10
       }
 
-      const rankValue = {
+      const rankValue: { [K in Rank]: number } = {
         IV: 0,
         III: 1,
         II: 2,
@@ -181,29 +227,45 @@ class LoLRanks {
       }
 
       if ((tier && rank) || tier === 'Unranked') {
-        const checkValue =
-          tier === 'Unranked'
+        const checkValue = rank
+          ? tier === 'Unranked'
             ? tierValue[tier]
             : tierValue[tier] + rankValue[rank]
+          : undefined
 
         // Translate the tier value
-        const tierLocale = i18n.__({
+        const tierLocale: { [K in Tier]: K } = this.i18n.__({
           phrase: 'ranks',
           locale: this.config.eloRoleLanguage
-        })
+        }) as unknown as { [K in Tier]: K }
         const translatedTier = tierLocale[tier]
 
-        const role = guild.roles.cache.find((r) => r.name === translatedTier)
+        const role = guild.roles.cache.find(
+          (r: { name: any }) => r.name === translatedTier
+        )
+
+        if (!role) {
+          console.warn(
+            'Role' +
+              translatedTier +
+              'not found! Interrupting rank assignment process...'
+          )
+          return
+        }
+
         const tierIcon =
           this.client.emojis.cache
-            .find((emoji) => emoji.name === this.config.rankIconNames[tier])
+            .find(
+              (emoji: { name: any }) =>
+                emoji.name === this.config.rankIconNames[tier]
+            )
             ?.toString() ?? ''
 
-        if (this.config.enableTierUpdateMessages) {
+        if (this.config.enableTierUpdateMessages && checkValue) {
           if (player.totalValue > checkValue) {
             return (
               member.user +
-              i18n.__('levelDown') +
+              this.i18n.__('levelDown') +
               tierIcon +
               '**' +
               translatedTier +
@@ -214,7 +276,7 @@ class LoLRanks {
           } else if (player.totalValue < checkValue) {
             return (
               member.user +
-              i18n.__('levelUp') +
+              this.i18n.__('levelUp') +
               tierIcon +
               '**' +
               translatedTier +
@@ -233,34 +295,34 @@ class LoLRanks {
         })
         player = this.dbHandler.getPlayerByDiscordId(discordID)
 
-        if (member.roles.cache.find((r) => r.id === role.id)) {
+        if (member.roles.cache.find((r: { id: any }) => r.id === role.id)) {
           reply +=
-            i18n.__('reply4_1') +
+            this.i18n.__('reply4_1') +
             tierIcon +
             '**' +
             translatedTier +
             ' ' +
             (soloQueueRankData?.rank ?? '') +
             '** ' +
-            i18n.__('reply4_2')
+            this.i18n.__('reply4_2')
         } else {
           await this.roles.removeAllEloRolesFromUser(member)
           await member.roles.add(role)
 
           reply +=
-            i18n.__('reply5_1') +
+            this.i18n.__('reply5_1') +
             tierIcon +
             '**' +
             translatedTier +
             ' ' +
             (soloQueueRankData?.rank ?? '') +
             '** ' +
-            i18n.__('reply5_2')
+            this.i18n.__('reply5_2')
         }
       } else {
         reply +=
-          i18n.__('reply6') +
-          (this.config.channels.help ? helpChannel : serverOwner) +
+          this.i18n.__('reply6') +
+          (this.config.channels?.help ? helpChannel : serverOwner) +
           '!'
 
         this.dbHandler.updatePlayer(discordID, {
@@ -277,17 +339,31 @@ class LoLRanks {
     return reply
   }
 
-  async setVerifiedRole(guild, member) {
+  async setVerifiedRole(guild: Guild, member: GuildMember) {
     if (this.config.setVerifiedRole) {
-      const verifiedRole = guild.roles.cache.find(
-        (r) => r.name === i18n.__('verified')
+      const verifiedRole: Role | undefined = guild.roles.cache.find(
+        (r: { name: any }) => r.name === this.i18n.__('verified')
       )
+
+      if (!verifiedRole) {
+        console.warn(
+          'The verified role could not be found. Please check your config.json file.'
+        )
+        return
+      }
 
       await member?.roles.add(verifiedRole)
     }
   }
 
-  lolAuth(auth, player, summonerData, discordID, reply, helpChannel) {
+  lolAuth(
+    auth: boolean,
+    player: { authCode: any },
+    summonerData: { profileIconId: any },
+    discordID: any,
+    reply: string,
+    helpChannel: string
+  ) {
     if (!auth && this.config.enableVerification) {
       try {
         if (!player.authCode) {
@@ -297,7 +373,7 @@ class LoLRanks {
         }
 
         if (summonerData.profileIconId !== player.authCode) {
-          reply += i18n.__('reply2') + '\n\n'
+          reply += this.i18n.__('reply2') + '\n\n'
           auth = true
           this.dbHandler.updatePlayer(discordID, {
             authCode: null,
@@ -309,23 +385,19 @@ class LoLRanks {
       } catch (error) {
         // TODO check whitespaces of translations used in replies
         reply +=
-          i18n.__('reply3_1') +
+          this.i18n.__('reply3_1') +
           '\n' +
-          i18n.__('reply3_2') +
+          this.i18n.__('reply3_2') +
           '\n' +
-          i18n.__('reply3_3') +
+          this.i18n.__('reply3_3') +
           '\n' +
-          i18n.__('reply3_5') +
+          this.i18n.__('reply3_5') +
           '\n\n' +
-          i18n.__('reply3_7') +
+          this.i18n.__('reply3_7') +
           helpChannel +
           '!'
       }
     }
     return { auth, reply }
   }
-}
-
-module.exports = {
-  LoLRanks
 }

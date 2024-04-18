@@ -1,18 +1,24 @@
-const Ajv = require('ajv')
-const addFormats = require('ajv-formats')
-const { IANAZone } = require('luxon')
-const { ApiHandler } = require('./data-handlers/api-handler')
+import Ajv, { ValidateFunction } from 'ajv'
+import addFormats from 'ajv-formats'
+import { IANAZone } from 'luxon'
+import { ApiHandler } from './data-handlers/api-handler.js'
+import { Config } from './interfaces/config.interface.js'
 
 class ConfigValidator {
-  constructor(config) {
+  private config: Config
+  private apiHandler: ApiHandler
+  private schema: object
+  private validate: ValidateFunction
+
+  constructor(config: Config) {
     this.config = config
     this.apiHandler = ApiHandler.getInstance(config)
 
-    const ajv = new Ajv({ allErrors: true, useDefaults: true })
-    addFormats(ajv)
+    const ajv = new Ajv.default({ allErrors: true, useDefaults: true })
+    addFormats.default(ajv)
 
     ajv.addFormat('timezone', {
-      validate: (timezone) => IANAZone.isValidZone(timezone)
+      validate: (timezone: string) => IANAZone.isValidZone(timezone)
     })
 
     // Define the JSON schema for the configuration
@@ -22,17 +28,18 @@ class ConfigValidator {
         channels: {
           type: 'object',
           properties: {
-            help: { type: 'string', pattern: '^[0-9]+$', nullable: true }
+            help: { type: 'string', pattern: '^[0-9]+', nullable: true }
           },
           additionalProperties: false
         },
-        guildId: { type: 'string', pattern: '^[0-9]+$' },
+        guildId: { type: 'string', pattern: '^[0-9]+' },
         setVerifiedRole: { type: 'boolean' },
         enableVerification: { type: 'boolean' },
         enableTierUpdateMessages: { type: 'boolean' },
         discordToken: { type: 'string' },
         riotToken: { type: 'string' },
         status: { type: 'string' },
+        embedColor: { type: 'string', pattern: '^[0-9a-fA-F]{6}$' },
         ranks: {
           type: 'array',
           items: { type: 'string' },
@@ -62,6 +69,7 @@ class ConfigValidator {
         'discordToken',
         'riotToken',
         'status',
+        'embedColor',
         'ranks',
         'rankIconNames',
         'region',
@@ -81,25 +89,26 @@ class ConfigValidator {
     this.validate = ajv.compile(this.schema)
   }
 
-  async validateDiscordResources(config) {
+  async validateDiscordResources(config: Config) {
     // Validate the guild ID
     await this.apiHandler.validateGuildId(config.guildId)
 
     // Validate the channel IDs
     if (config.channels)
       for (const channelId of Object.values(config.channels)) {
-        await this.apiHandler.validateChannelId(channelId, config.guildId)
+        await this.apiHandler.validateChannelId(channelId!, config.guildId)
       }
   }
 
   async validateConfig() {
     const valid = this.validate(this.config)
     if (!valid) {
-      const errors = this.validate.errors
-        .map((error) => {
-          return `Message: ${error.message}`
-        })
-        .join('\n')
+      const errors =
+        this.validate.errors
+          ?.map((error: any) => {
+            return `Message: ${error.message}`
+          })
+          .join('\n') || ''
       throw new Error(`Configuration validation failed with errors:\n${errors}`)
     }
 
@@ -110,4 +119,4 @@ class ConfigValidator {
   }
 }
 
-module.exports = ConfigValidator
+export default ConfigValidator

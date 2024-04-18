@@ -1,9 +1,12 @@
 class DbHandler {
-  constructor(db) {
+  private db: any
+  static instance: any
+
+  constructor(db: any) {
     this.db = db
   }
 
-  static getInstance(db = null) {
+  static getInstance(db: any = null): DbHandler {
     if (!this.instance && db) {
       this.instance = new DbHandler(db)
     }
@@ -11,23 +14,23 @@ class DbHandler {
     return this.instance
   }
 
-  getPlayerByDiscordId(id) {
+  getPlayerByDiscordId(id: string): any {
     const player = this.db.get('players').filter({ discordID: id }).value()
 
     return player[0]
   }
 
-  getPlayerBySummonerId(id) {
+  getPlayerBySummonerId(id: string): any {
     const player = this.db.get('players').filter({ summonerID: id }).value()
 
     return player[0]
   }
 
-  updatePlayer(id, args) {
+  updatePlayer(id: string, args: any): void {
     this.db.get('players').find({ discordID: id }).assign(args).write()
   }
 
-  deletePlayer(id, isSummonerID = true) {
+  deletePlayer(id: string, isSummonerID: boolean = true): void {
     this.db
       .get('players')
       .remove(isSummonerID ? { summonerID: id } : { discordID: id })
@@ -36,7 +39,7 @@ class DbHandler {
     console.log('Deleted player with summoner ID ' + id)
   }
 
-  initPlayer(discordID, summonerID) {
+  initPlayer(discordID: string, summonerID: string): any {
     if (!this.getPlayerByDiscordId(discordID)) {
       this.db
         .get('players')
@@ -54,6 +57,4 @@ class DbHandler {
   }
 }
 
-module.exports = {
-  DbHandler
-}
+export { DbHandler }

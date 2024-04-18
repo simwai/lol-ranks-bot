@@ -9,6 +9,7 @@
   "discordToken": "DISCORD-API-TOKEN",
   "riotToken": "RIOT-API-TOKEN",
   "status": "🤖 Ready to give rank roles",
+  "embedColor": "0099ff",
   "ranks": [
     "Unranked",
     "Iron",

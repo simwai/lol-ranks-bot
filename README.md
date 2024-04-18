@@ -43,7 +43,7 @@ To deploy the bot on a server using Docker, follow these steps:
 ### PM2 Deployment
 To deploy the bot on a server using PM2, follow these steps:
 
-1. Install Node.js (v16.0 or higher) and NPM on your server.
+1. Install Node.js (v20.9.0 or higher) and NPM on your server.
 2. Install PM2 globally by running `npm install pm2 -g`.
 3. Clone the repository (see Local Development Setup step 2).
 4. Install dependencies by running `npm install`.
@@ -66,6 +66,7 @@ To deploy the bot on a server using PM2, follow these steps:
 - `discordToken` = Tokens of your bot, used to authorize API requests and carry all of your bot user’s permissions ([Tutorial](https://discord.com/developers/docs/getting-started#configuring-a-bot))
 - `riotToken` = Riot development API key ([Tutorial](https://developer.riotgames.com/docs/lol#:~:text=Before%20you%20start%20reading%20this%20documentation%20you%20need%20to%20first%20login%20with%20your%20Riot%20Games%20account.%20Once%20you%20do,%20a%20Developer%20Portal%20account%20is%20created%20for%20you!%20This%20action%20also%20generates%20a%20basic%20development%20API%20key%20that%20is%20associated%20with%20your%20account.))
 - `status` = The Discord bot status
+- `embedColor` = The accent color of the embeds sent by the bot
 - `ranks` = The names of your rank roles on your Discord server
 - `rankIconNames` = The names of you rank icons on your Discord server
 - `region` = The LoL API endpoint region

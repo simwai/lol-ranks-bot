@@ -1,0 +1,12 @@
+export type Tier =
+  | 'Unranked'
+  | 'Iron'
+  | 'Bronze'
+  | 'Silver'
+  | 'Gold'
+  | 'Platinum'
+  | 'Emerald'
+  | 'Diamond'
+  | 'Master'
+  | 'Grandmaster'
+  | 'Challenger'

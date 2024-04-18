@@ -1,12 +1,27 @@
-const i18n = require('i18n')
+import i18n from 'i18n'
+import { Client, GuildMember } from 'discord.js'
+
+interface Config {
+  eloRoleLanguage: string
+  verifiedRoleLanguage: string
+  guildId: string
+  setVerifiedRole: boolean
+}
+
+interface Player {
+  tier: string | null
+}
 
 class Roles {
-  constructor(client, config) {
+  private client: Client
+  private config: Config
+
+  constructor(client: Client, config: Config) {
     this.client = client
     this.config = config
   }
 
-  async init() {
+  async init(): Promise<void> {
     const roles = Object.values(
       i18n.__({ phrase: 'ranks', locale: this.config.eloRoleLanguage })
     ).reverse()
@@ -26,7 +41,7 @@ class Roles {
     }
   }
 
-  async removeAllEloRolesFromUser(member) {
+  async removeAllEloRolesFromUser(member: GuildMember): Promise<void> {
     const elos = Object.values(
       i18n.__({ phrase: 'ranks', locale: this.config.eloRoleLanguage })
     )
@@ -38,7 +53,10 @@ class Roles {
     }
   }
 
-  async removeUnusedEloRolesFromUser(player, member) {
+  async removeUnusedEloRolesFromUser(
+    player: Player,
+    member: GuildMember
+  ): Promise<void> {
     if (player.tier !== null) {
       const elos = Object.values(
         i18n.__({ phrase: 'ranks', locale: this.config.eloRoleLanguage })
@@ -54,13 +72,15 @@ class Roles {
     }
   }
 
-  async removeAllDiscordRoles() {
+  async removeAllDiscordRoles(): Promise<void> {
     // WARNING: THIS COMMAND DELETE ALL RANK DISCORD ROLES
     // IT IS BEING USED FOR TESTING PURPOSES ONLY
-    const guild = this.client.guilds.fetch(this.config.guildId)
-    const botRole = guild.me.roles.botRole.name
+    const guild = await this.client.guilds.fetch(this.config.guildId)
+    const botRole = guild.me?.roles.botRole?.name
 
-    for (const roles of guild.roles.cache) {
+    if (!botRole) return
+
+    for (const roles of guild.roles.cache.values()) {
       if (roles.name !== '@everyone' && roles.name !== botRole) {
         try {
           const deleted = await roles.delete()
@@ -73,6 +93,4 @@ class Roles {
   }
 }
 
-module.exports = {
-  Roles
-}
+export { Roles }

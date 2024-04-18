@@ -1,27 +1,33 @@
-const got = require('got')
-const { URL } = require('url')
-const i18n = require('i18n')
+import got, { CancelableRequest } from 'got'
+import { URL } from 'url'
+import i18n from 'i18n'
+import { SummonerDataArgs } from '../types/summoner-data.type.js'
+import { Config } from '../interfaces/config.interface.js'
 
 class ApiHandler {
-  constructor(config) {
+  private static instance: ApiHandler | null = null
+  private config: Config
+  private discordBaseURL: string = 'https://discord.com/api/v9'
+
+  private constructor(config: Config) {
     this.config = config
-    this.discordBaseURL = 'https://discord.com/api/v9'
   }
 
-  static getInstance(config = null) {
+  public static getInstance(config: Config | null = null): ApiHandler {
     if (!this.instance) {
+      if (config === null) {
+        throw new Error('Config must be provided for the first instantiation.')
+      }
       this.instance = new ApiHandler(config)
     }
 
     return this.instance
   }
 
-  async getData(url) {
-    let response
-
+  public async getData(url: string | URL): Promise<CancelableRequest<any>> {
     try {
-      url = new URL(url)
-      response = await got(url, {
+      url = new URL(url.toString())
+      const response = await got(url, {
         method: 'GET',
         headers: {
           'X-Riot-Token': this.config.riotToken,
@@ -30,16 +36,18 @@ class ApiHandler {
       }).json()
 
       return response
-    } catch (error) {
+    } catch (error: any) {
       if (error.response && error.response.statusCode) {
-        throw new Error(error.message + ' ' + error.response.statusCode)
+        throw new Error(`${error.message} ${error.response.statusCode}`)
       } else {
         throw new Error('Network error')
       }
     }
   }
 
-  async getSummonerDataByNameOrId(args) {
+  public async getSummonerDataByNameOrId(
+    args: SummonerDataArgs
+  ): Promise<CancelableRequest<any>> {
     let summonerDataUrl = `https://${this.config.region}.api.riotgames.com/lol/summoner/v4/summoners/`
 
     switch (args.type) {
@@ -50,7 +58,11 @@ class ApiHandler {
       summonerDataUrl += args.value
       break
     case 'player':
-      summonerDataUrl += args.value.summonerID
+      if (typeof args.value === 'object' && args.value.summonerID) {
+        summonerDataUrl += args.value.summonerID
+      } else {
+        throw new Error('Invalid argument for type "player"')
+      }
       break
     default:
       break
@@ -59,23 +71,22 @@ class ApiHandler {
     return this.getData(summonerDataUrl)
   }
 
-  async getRankedDataById(helpChannel, summonerID) {
+  public async getRankedDataById(
+    helpChannel: string,
+    summonerID: string
+  ): Promise<CancelableRequest<any>> {
     const rankDataURL = `https://${this.config.region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}`
 
-    let rankData = ''
-
     try {
-      rankData = await this.getData(rankDataURL)
+      const rankData = await this.getData(rankDataURL)
+      return rankData
     } catch (error) {
       console.trace('Failed to get ranked data', error)
-
       return i18n.__('reply7') + helpChannel + '!'
     }
-
-    return rankData
   }
 
-  async validateGuildId(guildId) {
+  public async validateGuildId(guildId: string): Promise<boolean> {
     try {
       const response = await got(`${this.discordBaseURL}/guilds/${guildId}`, {
         headers: {
@@ -87,14 +98,18 @@ class ApiHandler {
         console.log(`Guild ID ${guildId} is valid.`)
         return true
       }
-    } catch (error) {
+      return false
+    } catch (error: any) {
       throw new Error(
         `Invalid guild ID: ${guildId}. ${error.response?.body || error.message}`
       )
     }
   }
 
-  async validateChannelId(channelId, guildId) {
+  public async validateChannelId(
+    channelId: string,
+    guildId: string
+  ): Promise<boolean> {
     try {
       const response = await got(
         `${this.discordBaseURL}/guilds/${guildId}/channels`,
@@ -106,7 +121,9 @@ class ApiHandler {
       )
 
       const channels = JSON.parse(response.body)
-      const channelExists = channels.some((channel) => channel.id === channelId)
+      const channelExists = channels.some(
+        (channel: { id: string }) => channel.id === channelId
+      )
 
       if (!channelExists) {
         throw new Error(
@@ -116,16 +133,14 @@ class ApiHandler {
 
       console.log(`Channel ID ${channelId} is valid.`)
       return true
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(
-        `Invalid channel ID: ${channelId}. ${
-          error.response?.body || error.message
-        }`
+        `Invalid channel ID: ${channelId}. ${error.response?.body || error.message}`
       )
     }
   }
 
-  async validateRiotToken() {
+  public async validateRiotToken(): Promise<boolean> {
     try {
       const response = await got(
         `https://${this.config.region}.api.riotgames.com/lol/platform/v3/champion-rotations`,
@@ -140,7 +155,8 @@ class ApiHandler {
         console.log('Riot token is valid.')
         return true
       }
-    } catch (error) {
+      return false
+    } catch (error: any) {
       if (error.response?.statusCode === 401) {
         throw new Error('Invalid Riot token.')
       }
@@ -149,6 +165,4 @@ class ApiHandler {
   }
 }
 
-module.exports = {
-  ApiHandler
-}
+export { ApiHandler }
