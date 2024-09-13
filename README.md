@@ -8,24 +8,23 @@ A Discord bot that allows users to verify their League of Legends summoner name 
 
 ## Prerequisites
 Before you begin, ensure you have met the following requirements:
-- For local development:
   - Node.js (v16.0 or higher)
   - NPM (usually comes with Node.js)
-- For server deployment:
-  - Node.js (v16.0 or higher)
   - Docker and Docker Compose (for Docker deployment)
   - PM2 (for PM2 deployment)
+
+Install Node.js (v16.0 or higher) and NPM from [Node.js official website](https://nodejs.org/en/download/).<br>
+Install Docker and Docker Compose on your server. Follow the [official Docker guide](https://docs.docker.com/get-docker/) for installation instructions.
 
 ## Local Development Setup
 Follow these steps to set up the bot for development purposes on your local machine:
 
-1. Install Node.js (v16.0 or higher) and NPM from [Node.js official website](https://nodejs.org/en/download/).
-2. Clone the repository:
-   - Open your terminal.
+1. Clone the repository:
    - Navigate to the directory where you want to clone the repository.
    - Run `git clone https://github.com/simwai/lol-ranks-bot.git`.
    - Navigate to the cloned directory by running `cd lol-ranks-bot`.
-3. Install dependencies by running `npm install`.
+2. Install dependencies by running `npm install`.
+3. Copy `config.json.example` and name it `config.json`.
 4. Adjust the config values by editing `config.json`.
 5. Start the bot by running `npm run-script start`.
 
@@ -34,8 +33,11 @@ Follow these steps to set up the bot for development purposes on your local mach
 ### Docker Deployment
 To deploy the bot on a server using Docker, follow these steps:
 
-1. Install Docker and Docker Compose on your server. Follow the [official Docker guide](https://docs.docker.com/get-docker/) for installation instructions.
-2. Clone the repository (see Local Development Setup step 2).
+1. Clone the repository:
+   - Navigate to the directory where you want to clone the repository.
+   - Run `git clone https://github.com/simwai/lol-ranks-bot.git`.
+   - Navigate to the cloned directory by running `cd lol-ranks-bot`.
+2. Copy `config.json.example` and name it `config.json`.
 3. Adjust the config values by editing `config.json`.
 4. Run `docker compose up -d` to build the Docker image and start the bot in detached mode.
 5. To stop the bot, run `docker compose down`.
@@ -43,12 +45,15 @@ To deploy the bot on a server using Docker, follow these steps:
 ### PM2 Deployment
 To deploy the bot on a server using PM2, follow these steps:
 
-1. Install Node.js (v16.0 or higher) and NPM on your server.
-2. Install PM2 globally by running `npm install pm2 -g`.
-3. Clone the repository (see Local Development Setup step 2).
-4. Install dependencies by running `npm install`.
+1. Install PM2 globally by running `npm install pm2 -g`.
+2. Clone the repository:
+   - Navigate to the directory where you want to clone the repository.
+   - Run `git clone https://github.com/simwai/lol-ranks-bot.git`.
+   - Navigate to the cloned directory by running `cd lol-ranks-bot`.
+3. Install dependencies by running `npm install`.
+4. Copy `config.json.example` and name it `config.json`.
 5. Adjust the config values by editing `config.json`.
-6. Start the bot using PM2 by running `pm2 start index.js --name lol-ranks-bot`.
+6. Start the bot using PM2 by running `pm2 start src/index.js --name lol-ranks-bot`.
 7. To ensure PM2 restarts the bot after reboots, run `pm2 save`
 
 ## How the Bot Works
@@ -64,7 +69,7 @@ To deploy the bot on a server using PM2, follow these steps:
   - `help` - Default channel to help members with bot-related issues
 - `guildID` = ID of your server ([Tutorial](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-))
 - `discordToken` = Tokens of your bot, used to authorize API requests and carry all of your bot user’s permissions ([Tutorial](https://discord.com/developers/docs/getting-started#configuring-a-bot))
-- `riotToken` = Riot development API key ([Tutorial](https://developer.riotgames.com/docs/lol#:~:text=Before%20you%20start%20reading%20this%20documentation%20you%20need%20to%20first%20login%20with%20your%20Riot%20Games%20account.%20Once%20you%20do,%20a%20Developer%20Portal%20account%20is%20created%20for%20you!%20This%20action%20also%20generates%20a%20basic%20development%20API%20key%20that%20is%20associated%20with%20your%20account.))
+- `riotToken` = Riot development API key ([Tutorial](https://developer.riotgames.com/docs/portal))
 - `status` = The Discord bot status
 - `ranks` = The names of your rank roles on your Discord server
 - `rankIconNames` = The names of you rank icons on your Discord server
