@@ -9,7 +9,7 @@
     "LoL"
   ],
   "license": "CC BY-NC-SA 4.0",
-  "author": "AlthalusAvan feat. simwai",
+  "author": "simwai",
   "main": "bot.js",
   "scripts": {
     "always-debug": "tsx watch --ignore ./tests --inspect --trace-warnings ./src/bot.ts",
@@ -33,7 +33,6 @@
     "discord-api-types": "^0.32.1",
     "discord.js": "13.17.1",
     "got": "^14.2.1",
-    "husky": "^8.0.3",
     "i18n": "^0.15.1",
     "lowdb": "^1.0.0",
     "luxon": "^3.4.4",
@@ -52,6 +51,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-json-format": "^2.0.1",
     "eslint-plugin-promise": "^6.0.0",
+    "husky": "^8.0.3",
     "nock": "^13.5.4",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
