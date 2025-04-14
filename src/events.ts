@@ -27,7 +27,7 @@ export class Events {
   apiHandler: ApiHandler
   dbHandler: DbHandler
 
-  commands: Map<any, any>
+  commands: Map<string, any>
 
   constructor(
     client: Client,
@@ -84,7 +84,7 @@ export class Events {
 
       if (
         interaction.isButton() &&
-        interaction.component.label === i18n.__('confirm')
+        interaction.component.label === this.i18n.__('confirm')
       ) {
         const player = this.dbHandler.getPlayerByDiscordId(interaction.user.id)
         if (!player) {
@@ -93,7 +93,7 @@ export class Events {
         }
 
         if (!player?.summonerID) {
-          console.error('Player not found.')
+          console.error('Player summonerID not found.')
           return
         }
 
@@ -104,10 +104,22 @@ export class Events {
 
         this.executeCommand('rank', interaction, args)
       } else if (interaction.isCommand()) {
-        const value = interaction.options.data[0].value as string
+        // Check if options.data array has elements before accessing
+        if (!interaction.options.data.length) {
+          // Handle commands without options or provide default behavior
+          const args: SummonerDataArgs = {
+            type: 'summonerName',
+            value: ''
+          }
+          this.executeCommand(interaction.commandName, interaction, args)
+          return
+        }
+
+        // Now we can safely access data[0] as we've verified it exists
+        const value = interaction?.options?.data?.[0]?.value as string
         const args: SummonerDataArgs = {
           type: 'summonerName',
-          value: value.trim()
+          value: typeof value === 'string' ? value.trim() : String(value)
         }
 
         this.executeCommand(interaction.commandName, interaction, args)

@@ -12,12 +12,13 @@
   "author": "simwai",
   "main": "bot.js",
   "scripts": {
-    "always-debug": "tsx watch --ignore ./tests --inspect --trace-warnings ./src/bot.ts",
+    "always-debug": "tsx watch --ignore ./src/tests --inspect --trace-warnings ./src/bot.ts",
     "debug": "tsx --inspect --trace-warnings ./src/bot.ts",
     "lint": "eslint --ext .ts,.json,.eslintrc --fix .",
     "format": "prettier-eslint --write \"src/**/*.ts\"",
     "start": "tsx src/bot.ts",
     "test": "npx ava",
+    "build": "tsc",
     "stop-debug": "taskkill /F /IM node.exe"
   },
   "engines": {
@@ -40,6 +41,8 @@
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
+    "@ava/typescript": "^5.0.0",
+    "@sindresorhus/tsconfig": "^5.0.0",
     "@types/i18n": "^0.13.10",
     "@types/lowdb": "^1.0.15",
     "@types/luxon": "^3.4.2",
@@ -60,5 +63,20 @@
     "sinon": "^17.0.1",
     "tsx": "^4.7.2",
     "typescript": "^5.4.5"
+  },
+  "ava": {
+    "files": [
+      "./src/tests/**/*.test.ts"
+    ],
+    "typescript": {
+      "rewritePaths": {
+        "src/": "build/src/"
+      },
+      "compile": "tsc"
+    },
+    "concurrency": 5,
+    "failFast": false,
+    "failWithoutAssertions": false,
+    "verbose": true
   }
 }
