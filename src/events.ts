@@ -4,7 +4,14 @@ import { pathToFileURL, fileURLToPath } from 'node:url'
 import lowdb from 'lowdb'
 import Bottleneck from 'bottleneck'
 import { I18n } from 'i18n'
-import { Client, Interaction } from 'discord.js'
+import {
+  ButtonInteraction,
+  CacheType,
+  Client,
+  ColorResolvable,
+  Interaction,
+  MessageEmbed
+} from 'discord.js'
 import { SlashCommands } from './slash-commands.js'
 import { LoLRanks } from './lol-ranks.js'
 import { Roles } from './roles.js'
@@ -27,7 +34,7 @@ export class Events {
   apiHandler: ApiHandler
   dbHandler: DbHandler
 
-  commands: Map<any, any>
+  commands: Map<string, any>
 
   constructor(
     client: Client,
@@ -84,17 +91,13 @@ export class Events {
 
       if (
         interaction.isButton() &&
-        interaction.component.label === i18n.__('confirm')
+        interaction.component.label === this.i18n.__('confirm')
       ) {
         const player = this.dbHandler.getPlayerByDiscordId(interaction.user.id)
-        if (!player) {
-          console.error('Player not found.')
-          return
-        }
 
-        if (!player?.summonerID) {
-          console.error('Player not found.')
-          return
+        if (!player) {
+          // [CHANGED] Use your embed pattern for user feedback
+          return await this._buildInteractionReplyEmbed(interaction)
         }
 
         const args: SummonerDataArgs = {
@@ -104,10 +107,22 @@ export class Events {
 
         this.executeCommand('rank', interaction, args)
       } else if (interaction.isCommand()) {
-        const value = interaction.options.data[0].value as string
+        // Check if options.data array has elements before accessing
+        if (!interaction.options.data.length) {
+          // Handle commands without options or provide default behavior
+          const args: SummonerDataArgs = {
+            type: 'summonerName',
+            value: ''
+          }
+          this.executeCommand(interaction.commandName, interaction, args)
+          return
+        }
+
+        // Now we can safely access data[0] as we've verified it exists
+        const value = interaction?.options?.data?.[0]?.value as string
         const args: SummonerDataArgs = {
           type: 'summonerName',
-          value: value.trim()
+          value: typeof value === 'string' ? value.trim() : String(value)
         }
 
         this.executeCommand(interaction.commandName, interaction, args)
@@ -158,5 +173,24 @@ export class Events {
     } catch (error) {
       console.trace(`Error executing command ${name}:`, error)
     }
+  }
+
+  private async _buildInteractionReplyEmbed(
+    interaction: ButtonInteraction<CacheType>
+  ) {
+    const embed = new MessageEmbed().setColor(
+      this.config.embedColor as ColorResolvable
+    )
+    embed.setDescription(this.i18n.__('player_not_found_message'))
+
+    try {
+      await (interaction as ButtonInteraction).reply({
+        embeds: [embed],
+        ephemeral: true
+      })
+    } catch (error) {
+      console.trace('Failed to reply player not found', error)
+    }
+
   }
 }

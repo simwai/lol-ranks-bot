@@ -1,4 +1,5 @@
 {
+  "extends": "@sindresorhus/tsconfig",
   "compilerOptions": {
     "target": "ES2022",
     "module": "Node16",
@@ -13,5 +14,10 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-  }
+    "outDir": "build",
+    "noUnusedLocals": false
+  },
+  "include": [
+    "./src"
+  ]
 }

@@ -1,4 +1,5 @@
 # lol-ranks-bot
+
 A Discord bot that allows users to verify their League of Legends summoner name and assigns roles based on their rank/elo in the game. Users must initiate the verification process themselves, and upon successful verification, the bot will grant them the appropriate rank role within the Discord server.
 
 [![VS Code](https://img.shields.io/badge/IDE-VS%20Code-6A0DAD.svg)](https://code.visualstudio.com/)
@@ -7,16 +8,19 @@ A Discord bot that allows users to verify their League of Legends summoner name 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-9370DB.svg?style=flat&labelColor=454545&color=9370DB)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 ## Prerequisites
-Before you begin, ensure you have met the following requirements:
-  - Node.js (v16.0 or higher)
-  - NPM (usually comes with Node.js)
-  - Docker and Docker Compose (for Docker deployment)
-  - PM2 (for PM2 deployment)
 
-Install Node.js (v16.0 or higher) and NPM from [Node.js official website](https://nodejs.org/en/download/).<br>
+Before you begin, ensure you have met the following requirements:
+
+- Node.js (v20.0 or higher)
+- NPM (usually comes with Node.js)
+- Docker and Docker Compose (for Docker deployment)
+- PM2 (for PM2 deployment)
+
+Install Node.js (v20.0 or higher) and NPM from [Node.js official website](https://nodejs.org/en/download/).<br>
 Install Docker and Docker Compose on your server. Follow the [official Docker guide](https://docs.docker.com/get-docker/) for installation instructions.
 
 ## Local Development Setup
+
 Follow these steps to set up the bot for development purposes on your local machine:
 
 1. Clone the repository:
@@ -31,6 +35,7 @@ Follow these steps to set up the bot for development purposes on your local mach
 ## Server Deployment
 
 ### Docker Deployment
+
 To deploy the bot on a server using Docker, follow these steps:
 
 1. Clone the repository:
@@ -43,6 +48,7 @@ To deploy the bot on a server using Docker, follow these steps:
 5. To stop the bot, run `docker compose down`.
 
 ### PM2 Deployment
+
 To deploy the bot on a server using PM2, follow these steps:
 
 1. Install PM2 globally by running `npm install pm2 -g`.
@@ -57,6 +63,7 @@ To deploy the bot on a server using PM2, follow these steps:
 7. To ensure PM2 restarts the bot after reboots, run `pm2 save`
 
 ## How the Bot Works
+
 - Users trigger the verification process by a command in Discord.
 - The bot verifies the user's League of Legends summoner name.
 - Once verified, the bot checks the user's rank/elo in League of Legends.
@@ -65,6 +72,7 @@ To deploy the bot on a server using PM2, follow these steps:
 - The bot does not automatically assign roles to all users; each user must initiate the verification process.
 
 ## Settings
+
 - `channels` = Set the ID of the channels that will be used for the Bot to send the messages (optional)
   - `help` - Default channel to help members with bot-related issues
 - `guildID` = ID of your server ([Tutorial](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-))
@@ -90,4 +98,5 @@ To deploy the bot on a server using PM2, follow these steps:
 - To enable rank icons on messages (like this <img alt="Challenger Icon" style="width:18px" src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/challenger.png"/>) you need to add custom emojis on your server ([Tutorial](https://support.discord.com/hc/en-us/articles/360036479811-Custom-Emojis))). The icons are inside the `assets/img` folder (Please do not change the name of the icons or the bot will not be able to identify them)
 
 ## LICENSE
+
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br/><br/><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
