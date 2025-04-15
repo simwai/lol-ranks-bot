@@ -51,15 +51,15 @@ To deploy the bot on a server using Docker, follow these steps:
 
 To deploy the bot on a server using PM2, follow these steps:
 
-1. Install PM2 globally by running `npm install pm2 -g`.
+1. Install PM2 globally by running `npm install pm2 -g`
 2. Clone the repository:
    - Navigate to the directory where you want to clone the repository.
-   - Run `git clone https://github.com/simwai/lol-ranks-bot.git`.
-   - Navigate to the cloned directory by running `cd lol-ranks-bot`.
-3. Install dependencies by running `npm install`.
-4. Copy `config.json.example` and name it `config.json`.
-5. Adjust the config values by editing `config.json`.
-6. Start the bot using PM2 by running `pm2 start src/index.js --name lol-ranks-bot`.
+   - Run `git clone https://github.com/simwai/lol-ranks-bot.git`
+   - Navigate to the cloned directory by running `cd lol-ranks-bot`
+3. Install dependencies by running `npm install`
+4. Copy `config.json.example` and name it `config.json`
+5. Adjust the config values by editing `config.json`
+6. Start the bot using PM2 by running `pm2 start src/index.js --name lol-ranks-bot`
 7. To ensure PM2 restarts the bot after reboots, run `pm2 save`
 
 ## How the Bot Works
@@ -95,7 +95,7 @@ To deploy the bot on a server using PM2, follow these steps:
 - `enableVerification` = Enables summoner name verification
 - `enableTierUpdateMessages` = Enable bot to send messages on configured channel for rank up/down
 
-- To enable rank icons on messages (like this <img alt="Challenger Icon" style="width:18px" src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/challenger.png"/>) you need to add custom emojis on your server ([Tutorial](https://support.discord.com/hc/en-us/articles/360036479811-Custom-Emojis))). The icons are inside the `assets/img` folder (Please do not change the name of the icons or the bot will not be able to identify them)
+- To enable rank icons on messages (like this <img alt="Challenger Icon" style="width:18px" src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/challenger.png"/>) you need to add custom emojis on your server ([Tutorial](https://support.discord.com/hc/en-us/articles/360036479811-Custom-Emojis)). The icons are inside the `assets/img` folder (Please do not change the name of the icons or the bot will not be able to identify them)
 
 ## LICENSE
 
