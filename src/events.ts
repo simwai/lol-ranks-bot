@@ -191,6 +191,5 @@ export class Events {
     } catch (error) {
       console.trace('Failed to reply player not found', error)
     }
-
   }
 }
