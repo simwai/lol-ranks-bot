@@ -96,7 +96,6 @@ export class Events {
         const player = this.dbHandler.getPlayerByDiscordId(interaction.user.id)
 
         if (!player) {
-          // [CHANGED] Use your embed pattern for user feedback
           return await this._buildInteractionReplyEmbed(interaction)
         }
 
